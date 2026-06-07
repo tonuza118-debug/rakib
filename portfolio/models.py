@@ -309,13 +309,3 @@ class ContactMessage(models.Model):
         return f"{self.name}: {self.subject or '(No subject)'}"
 
 
-class VisitorSession(models.Model):
-    """Track daily visitor statistics."""
-    date = models.DateField(unique=True)
-    count = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        ordering = ['-date']
-
-    def __str__(self):
-        return f"{self.date}: {self.count} visitors"

@@ -1,7 +1,7 @@
 """Custom admin for core models."""
 
 from django.contrib import admin
-from .models import SiteSettings, VisitorLog
+from .models import SiteSettings, VisitorLog, VisitorSession
 
 
 @admin.register(SiteSettings)
@@ -41,3 +41,11 @@ class VisitorLogAdmin(admin.ModelAdmin):
     search_fields = ['ip_address', 'user_agent']
     readonly_fields = ['session_key', 'ip_address', 'user_agent', 'visited_at', 'page_views']
     date_hierarchy = 'visited_at'
+
+
+@admin.register(VisitorSession)
+class VisitorSessionAdmin(admin.ModelAdmin):
+    list_display = ['date', 'count']
+    readonly_fields = ['date', 'count']
+    date_hierarchy = 'date'
+

@@ -44,6 +44,10 @@ class VisitorCounterMiddleware:
         if created:
             daily.count += 1
             daily.save(update_fields=['count'])
+            # Increment global settings counter
+            from .models import SiteSettings
+            settings_obj = SiteSettings.get_instance()
+            settings_obj.increment_visitor_count()
 
         return response
 

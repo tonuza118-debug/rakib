@@ -4,7 +4,7 @@ from django.contrib import admin
 from .models import (
     Profile, SkillCategory, Skill, ProjectCategory, Project, ProjectImage,
     Education, Experience, Achievement, Publication,
-    Testimonial, BlogPost, ContactMessage, VisitorSession
+    Testimonial, BlogPost, ContactMessage
 )
 
 
@@ -154,8 +154,3 @@ class ContactMessageAdmin(admin.ModelAdmin):
     mark_as_archived.short_description = "Mark selected as archived"
 
 
-@admin.register(VisitorSession)
-class VisitorSessionAdmin(admin.ModelAdmin):
-    list_display = ['date', 'count']
-    readonly_fields = ['date', 'count']
-    date_hierarchy = 'date'

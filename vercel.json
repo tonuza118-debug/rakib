@@ -1,9 +1,19 @@
 {
     "version": 2,
+    "builds": [
+        {
+            "src": "vercel/handler.py",
+            "use": "@vercel/python"
+        }
+    ],
     "routes": [
         {
+            "src": "/static/(.*)",
+            "dest": "staticfiles/$1"
+        },
+        {
             "src": "/(.*)",
-            "dest": "portfolio_project/wsgi.py"
+            "dest": "vercel/handler.py"
         }
     ],
     "env": {
