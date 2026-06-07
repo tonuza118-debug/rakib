@@ -50,7 +50,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.VisitorCounterMiddleware',
 ]
 
 ROOT_URLCONF = 'portfolio_project.urls'
@@ -110,7 +109,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise — use simple storage (CompressedManifest requires collectstatic on server)
+# WhiteNoise — simple compressed storage (works without collectstatic manifest)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media files
@@ -119,7 +118,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Security settings (enabled in production)
+# Security settings (conservative for serverless compatibility)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
 if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -153,25 +155,10 @@ SIMPLE_JWT = {
 # CORS — allow all origins
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Celery (disabled on Vercel)
-CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='')
-CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='')
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-
 # Cache
-_redis_url = config('REDIS_URL', default='')
-if _redis_url:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-            'LOCATION': _redis_url,
-        }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'portfolio-cache',
     }
-else:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'portfolio-cache',
-        }
-    }
+}
