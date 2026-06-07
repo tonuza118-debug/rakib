@@ -1,0 +1,993 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- ============================================ -->
+<!-- HERO SECTION -->
+<!-- ============================================ -->
+<section id="hero" class="section flex items-center justify-center relative overflow-hidden" style="min-height: 50vh; padding: 0;">
+    <!-- Hero Background Gradient -->
+    <div class="absolute inset-0 bg-gradient-to-br from-deep-black via-[#0f172a] to-[#111827] opacity-90"></div>
+    <!-- Radial glow (reduced blur for performance) -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-electric-blue/5 blur-[60px]"></div>
+    <div class="absolute top-1/3 right-1/4 w-[250px] h-[250px] rounded-full bg-neon-purple/5 blur-[50px]"></div>
+
+    <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
+        <!-- Greeting -->
+        <div class="mb-6" data-animate data-duration="1.2">
+            <span class="font-mono text-sm tracking-[0.3em] text-neon-cyan/70 uppercase">
+                {{ site.hero_title|default:"Hello, I'm" }}
+            </span>
+        </div>
+
+        <!-- Name with glitch -->
+        <h1 class="section-title glitch gradient-text mb-6" data-text="{{ profile.full_name|default:site.hero_name|default:"Your Name" }}" data-animate data-duration="1.5">
+            {{ profile.full_name|default:site.hero_name|default:"Your Name" }}
+        </h1>
+
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center" data-animate data-delay="0.7" data-duration="1">
+            <a href="#projects" class="magnetic-btn">
+                <span>Explore My Work</span>
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+            <a href="#contact" class="magnetic-btn" style="background: transparent; border-color: rgba(255,255,255,0.2);">
+                <span>Get In Touch</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- ABOUT SECTION -->
+<!-- ============================================ -->
+<section id="about" class="section relative">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <!-- Left: 3D Card / Avatar -->
+            <div class="relative" data-animate>
+                <div class="tilt-card relative w-full aspect-square max-w-md mx-auto">
+                    <div class="absolute inset-0 bg-gradient-to-br from-electric-blue/20 to-neon-purple/20 rounded-3xl blur-xl"></div>
+                    <div class="relative glass-strong rounded-3xl p-8 h-full flex items-center justify-center">
+                        {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" alt="{{ profile.full_name }}" class="w-full h-full object-cover rounded-2xl">
+                        {% else %}
+                        <div class="text-center">
+                            <div class="w-48 h-48 mx-auto mb-6 rounded-full bg-gradient-to-br from-electric-blue to-neon-purple flex items-center justify-center animate-glow">
+                                <span class="text-6xl font-display font-bold text-white">{{ profile.full_name|default:"?" }}</span>
+                            </div>
+                            <div class="font-mono text-xs text-neon-cyan/50 tracking-widest">// AVATAR_PLACEHOLDER</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <!-- Floating info cards -->
+                    <div class="absolute -top-4 -right-4 glass rounded-xl px-4 py-2 animate-float" style="animation-delay: 0s;">
+                        <span class="font-mono text-xs text-neon-cyan">📍 {{ profile.location|default:"Earth" }}</span>
+                    </div>
+                    <div class="absolute -bottom-4 -left-4 glass rounded-xl px-4 py-2 animate-float" style="animation-delay: 1s;">
+                        <span class="font-mono text-xs text-neon-purple">⚡ {{ profile.title|default:"Developer" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Bio -->
+            <div data-animate data-delay="0.2">
+                <div class="section-subtitle">// About Me</div>
+                <h2 class="section-title gradient-text-static mb-6">
+                    {{ profile.full_name|default:site.hero_name|default:"Your Name" }}
+                </h2>
+                <div class="space-y-4 text-white/60 leading-relaxed text-lg">
+                    {% if profile.bio %}
+                        <p>{{ profile.bio }}</p>
+                    {% else %}
+                        <p>
+                            I'm a multidisciplinary professional at the intersection of physics, technology, and innovation.
+                            With a deep foundation in scientific research and modern software development, I bring a unique
+                            perspective to every project I undertake.
+                        </p>
+                        <p>
+                            My journey has taken me from theoretical physics to full-stack development, from academic
+                            research to building production-grade applications. I believe in the power of
+                            interdisciplinary thinking to solve complex problems.
+                        </p>
+                    {% endif %}
+                </div>
+
+                <!-- Quick stats -->
+                <div class="grid grid-cols-3 gap-6 mt-10">
+                    <div class="glass rounded-xl p-4 text-center tilt-card">
+                        <div class="text-3xl font-display font-bold gradient-text counter" data-target="3">0</div>
+                        <div class="text-xs text-white/40 font-mono mt-1">YEARS EXPERIENCE</div>
+                    </div>
+                    <div class="glass rounded-xl p-4 text-center tilt-card">
+                        <div class="text-3xl font-display font-bold gradient-text counter" data-target="95">0</div>
+                        <div class="text-xs text-white/40 font-mono mt-1">PROJECTS</div>
+                    </div>
+                    <div class="glass rounded-xl p-4 text-center tilt-card">
+                        <div class="text-3xl font-display font-bold gradient-text counter" data-target="10">0</div>
+                        <div class="text-xs text-white/40 font-mono mt-1">PUBLICATIONS</div>
+                    </div>
+                </div>
+
+                <!-- Interests -->
+                {% if profile.interests %}
+                <div class="mt-8">
+                    <h3 class="font-mono text-xs text-white/30 tracking-widest mb-4">INTERESTS</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% for interest in profile.interests %}
+                        <span class="glass px-4 py-2 rounded-full text-sm text-white/60 hover:text-neon-cyan hover:border-neon-cyan/30 transition-all cursor-default">{{ interest }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SKILLS GALAXY SECTION -->
+<!-- ============================================ -->
+<section id="skills" class="section relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-neon-purple/3 to-transparent"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-16" data-animate>
+            <div class="section-subtitle">My Skills</div>
+            <h2 class="section-title gradient-text-static">My Technology Universe</h2>
+            <p class="text-white/40 max-w-2xl mx-auto mt-4">
+                Each planet represents a skill. Hover to explore proficiency levels and related technologies.
+            </p>
+        </div>
+
+        <!-- Skills Galaxy Visualization -->
+        <div class="relative" data-animate data-delay="0.09">
+            <div id="skills-galaxy" class="relative w-full h-[60px] md:h-[70px]">
+                <!-- Central core -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-gradient-to-br from-electric-blue to-neon-purple flex items-center justify-center animate-glow z-10">
+                    <span class="font-display font-bold text-lg text-white">SKILLS</span>
+                </div>
+
+                <!-- Skill planets -->
+                {% for category in skills_by_category %}
+                <div class="skill-group" data-category="{{ category.category.name }}">
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <!-- Category ring -->
+                        <div class="absolute border border-white/5 rounded-full" style="width: {{ forloop.counter|add:1 }}*120px; height: {{ forloop.counter|add:1 }}*120px; left: -{{ forloop.counter|add:1 }}*60px; top: -{{ forloop.counter|add:1 }}*60px;"></div>
+                    </div>
+                    {% for skill in category.skills.all %}
+                    {% with forloop.counter0 as skill_idx %}
+                    <div class="skill-planet absolute top-1/2 left-1/2 w-16 h-16 -ml-8 -mt-8 rounded-full glass-strong flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-125 hover:z-20 group tilt-card"
+                         style="transform: rotate|calc:{{ skill_idx }}*360/{{ category.skills.all|length }}deg) translate|calc:{{ forloop.parentloop.counter }}*120px) rotate|calc:-{{ skill_idx }}*360/{{ category.skills.all|length }}deg);"
+                         data-skill="{{ skill.name }}"
+                         data-proficiency="{{ skill.proficiency_percent }}"
+                         data-category="{{ category.category.name }}">
+                        <span class="text-xs font-mono text-white/70 group-hover:text-neon-cyan transition-colors">{{ skill.name|truncatewords:1 }}</span>
+                        <!-- Tooltip -->
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 glass rounded-lg text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30">
+                            <div class="font-bold text-white">{{ skill.name }}</div>
+                            <div class="text-neon-cyan">{{ skill.get_proficiency_display }}</div>
+                            <div class="w-20 h-1 bg-white/10 rounded-full mt-1">
+                                <div class="h-full bg-gradient-to-r from-electric-blue to-neon-cyan rounded-full" style="width: {{ skill.proficiency_percent }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+                {% empty %}
+                <!-- Default skills display -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    {% for i in "Python,Django,Physics,Machine Learning,React,SQL,Mathematics,Data Science,AI,WebGL"|slice:":" %}
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Skills grid fallback / detail view -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
+            {% for category in skills_by_category %}
+            <div class="glass glass-hover rounded-2xl p-6 tilt-card" data-animate data-delay="{{ forloop.counter0 }}*0.1">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-3 h-3 rounded-full" style="background: {{ category.category.color }}"></div>
+                    <h3 class="font-display font-semibold text-lg">{{ category.category.name }}</h3>
+                </div>
+                <div class="space-y-3">
+                    {% for skill in category.skills.all %}
+                    <div class="group">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-white/70 group-hover:text-white transition-colors">{{ skill.name }}</span>
+                            <span class="font-mono text-xs text-white/40">{{ skill.proficiency_percent }}%</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-electric-blue to-neon-cyan rounded-full transition-all duration-1000 ease-out"
+                                 style="width: 0%"
+                                 data-width="{{ skill.proficiency_percent }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- PROJECTS SHOWCASE -->
+<!-- ============================================ -->
+<section id="projects" class="section relative">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-animate>
+            <div class="section-subtitle">// Projects</div>
+            <h2 class="section-title gradient-text-static">Featured Work</h2>
+            <p class="text-white/40 max-w-2xl mx-auto mt-4">
+                A curated selection of projects spanning physics, AI, web development, and research.
+            </p>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="flex flex-wrap justify-center gap-3 mb-12" data-animate data-delay="0.1">
+            <button class="filter-btn active glass px-5 py-2 rounded-full text-sm font-medium text-neon-cyan border-neon-cyan/30 transition-all hover:bg-neon-cyan/10" data-filter="all">
+                All Projects
+            </button>
+            {% for cat in project_categories %}
+            <button class="filter-btn glass px-5 py-2 rounded-full text-sm font-medium text-white/50 border-white/10 transition-all hover:text-white hover:border-white/30" data-filter="{{ cat.slug }}">
+                {{ cat.name }}
+            </button>
+            {% endfor %}
+        </div>
+
+        <!-- Projects Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-grid">
+            {% for project in projects %}
+            <div class="project-card group relative glass glass-hover rounded-2xl overflow-hidden tilt-card"
+                 data-category="{{ project.category.slug|default:'uncategorized' }}"
+                 data-animate data-delay="{{ forloop.counter0 }}*0.1">
+                <!-- Project Image -->
+                <div class="relative h-56 overflow-hidden">
+                    {% if project.image %}
+                    <img src="{{ project.image.url }}" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-electric-blue/20 to-neon-purple/20 flex items-center justify-center">
+                        <span class="text-4xl font-display font-bold gradient-text">{{ project.title|first }}</span>
+                    </div>
+                    {% endif %}
+                    <!-- Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent opacity-60"></div>
+                    <!-- Status badge -->
+                    <div class="absolute top-4 right-4">
+                        <span class="glass px-3 py-1 rounded-full text-xs font-mono
+                            {% if project.status == 'completed' %}text-green-400
+                            {% elif project.status == 'in_progress' %}text-yellow-400
+                            {% else %}text-white/50{% endif %}">
+                            {{ project.get_status_display }}
+                        </span>
+                    </div>
+                    {% if project.featured %}
+                    <div class="absolute top-4 left-4">
+                        <span class="bg-gradient-to-r from-electric-blue to-neon-purple px-3 py-1 rounded-full text-xs font-bold text-white">
+                            ★ FEATURED
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="p-6">
+                    <h3 class="font-display font-semibold text-xl mb-2 group-hover:text-neon-cyan transition-colors">
+                        {{ project.title }}
+                    </h3>
+                    <p class="text-white/40 text-sm mb-4 line-clamp-2">{{ project.short_description|default:project.description|truncatewords:20 }}</p>
+
+                    <!-- Technologies -->
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        {% for tech in project.technologies|slice:":4" %}
+                        <span class="text-xs font-mono text-white/30 bg-white/5 px-2 py-1 rounded">{{ tech }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Links -->
+                    <div class="flex items-center gap-4 pt-4 border-t border-white/5">
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" target="_blank" class="text-white/40 hover:text-neon-cyan transition-colors text-sm flex items-center gap-1" style="cursor: none;">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                            Code
+                        </a>
+                        {% endif %}
+                        {% if project.live_url %}
+                        <a href="{{ project.live_url }}" target="_blank" class="text-white/40 hover:text-neon-cyan transition-colors text-sm flex items-center gap-1" style="cursor: none;">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            Demo
+                        </a>
+                        {% endif %}
+                        {% if project.video_url %}
+                        <a href="{{ project.video_url }}" target="_blank" class="text-white/40 hover:text-neon-purple transition-colors text-sm flex items-center gap-1" style="cursor: none;">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Video
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'portfolio:project_detail' project.slug %}" class="ml-auto text-white/40 hover:text-neon-purple transition-colors text-sm flex items-center gap-1" style="cursor: none;">
+                            Details →
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-20">
+                <div class="text-6xl mb-4">🚀</div>
+                <p class="text-white/40 font-mono">No projects yet. Add some from the admin panel!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- EXPERIENCE / CV SECTION -->
+<!-- ============================================ -->
+<section id="experience" class="section relative">
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-electric-blue/3 to-transparent"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-16" data-animate>
+            <div class="section-subtitle">// Career Journey</div>
+            <h2 class="section-title gradient-text-static">Experience & Education</h2>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-16">
+            <!-- Experience Timeline -->
+            <div data-animate>
+                <h3 class="font-display text-2xl font-semibold mb-8 flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-full bg-electric-blue/20 flex items-center justify-center text-electric-blue">💼</span>
+                    Work Experience
+                </h3>
+                <div class="relative">
+                    <!-- Timeline line -->
+                    <div class="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-electric-blue via-neon-purple to-transparent"></div>
+
+                    <div class="space-y-8">
+                        {% for exp in experience %}
+                        <div class="relative pl-12 group" data-animate data-delay="{{ forloop.counter0 }}*0.15">
+                            <!-- Timeline dot -->
+                            <div class="absolute left-2.5 top-1 w-3 h-3 rounded-full bg-electric-blue border-2 border-deep-black group-hover:scale-150 transition-transform"></div>
+                            <div class="glass rounded-xl p-6 group-hover:border-electric-blue/30 transition-all tilt-card">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-display font-semibold text-lg group-hover:text-neon-cyan transition-colors">{{ exp.position }}</h4>
+                                    <span class="font-mono text-xs text-white/30 whitespace-nowrap ml-2">
+                                        {{ exp.start_date|date:"M Y" }} - {% if exp.end_date %}{{ exp.end_date|date:"M Y" %} else %}Present{% endif %}
+                                    </span>
+                                </div>
+                                <p class="text-electric-blue/70 text-sm font-medium mb-2">
+                                    {{ exp.company }}
+                                    {% if exp.location %} · {{ exp.location }}{% endif %}
+                                </p>
+                                <p class="text-white/40 text-sm leading-relaxed">{{ exp.description|truncatewords:30 }}</p>
+                                {% if exp.achievements %}
+                                <ul class="mt-3 space-y-1">
+                                    {% for achievement in exp.achievements|slice:":3" %}
+                                    <li class="text-white/30 text-xs flex items-start gap-2">
+                                        <span class="text-neon-cyan mt-0.5">▹</span> {{ achievement }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="pl-12 text-white/30 font-mono text-sm">
+                            Add work experience from the admin panel.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education Timeline -->
+            <div data-animate data-delay="0.2">
+                <h3 class="font-display text-2xl font-semibold mb-8 flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-full bg-neon-purple/20 flex items-center justify-center text-neon-purple">🎓</span>
+                    Education
+                </h3>
+                <div class="relative">
+                    <div class="absolute left-4 top-0 bottom-0 w-px bg-gradient-to-b from-neon-purple via-electric-blue to-transparent"></div>
+
+                    <div class="space-y-8">
+                        {% for edu in education %}
+                        <div class="relative pl-12 group" data-animate data-delay="{{ forloop.counter0 }}*0.15">
+                            <div class="absolute left-2.5 top-1 w-3 h-3 rounded-full bg-neon-purple border-2 border-deep-black group-hover:scale-150 transition-transform"></div>
+                            <div class="glass rounded-xl p-6 group-hover:border-neon-purple/30 transition-all tilt-card">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-display font-semibold text-lg group-hover:text-neon-cyan transition-colors">{{ edu.degree }}</h4>
+                                    <span class="font-mono text-xs text-white/30 whitespace-nowrap ml-2">
+                                        {{ edu.start_date|date:"Y" }} - {% if edu.end_date %}{{ edu.end_date|date:"Y" %} else %}Present{% endif %}
+                                    </span>
+                                </div>
+                                <p class="text-neon-purple/70 text-sm font-medium mb-1">{{ edu.institution }}</p>
+                                <p class="text-white/40 text-sm">{{ edu.field_of_study }}</p>
+                                {% if edu.gpa %}
+                                <p class="text-white/30 text-xs font-mono mt-1">GPA: {{ edu.gpa }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="pl-12 text-white/30 font-mono text-sm">
+                            Add education from the admin panel.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- ACHIEVEMENTS SECTION -->
+<!-- ============================================ -->
+<section id="achievements" class="section relative">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-animate>
+            <div class="section-subtitle">// Hall of Achievements</div>
+            <h2 class="section-title gradient-text-static">MY ACHIEVEMENTS</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for achievement in achievements %}
+            <div class="achievement-card glass glass-hover rounded-2xl p-6 relative overflow-hidden group tilt-card"
+                 data-animate data-delay="{{ forloop.counter0 }}*0.1">
+                <!-- Glow effect -->
+                <div class="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-electric-blue/10 to-neon-purple/10 rounded-full blur-3xl group-hover:from-electric-blue/20 group-hover:to-neon-purple/20 transition-all"></div>
+
+                <div class="relative z-10">
+                    <!-- Type badge -->
+                    <span class="inline-block font-mono text-xs px-3 py-1 rounded-full mb-4
+                        {% if achievement.achievement_type == 'award' %}bg-yellow-500/10 text-yellow-400
+                        {% elif achievement.achievement_type == 'scholarship' %}bg-green-500/10 text-green-400
+                        {% elif achievement.achievement_type == 'certification' %}bg-blue-500/10 text-blue-400
+                        {% elif achievement.achievement_type == 'competition' %}bg-red-500/10 text-red-400
+                        {% else %}bg-white/5 text-white/50{% endif %}">
+                        ACHIEVEMENT
+                    </span>
+
+                    <h3 class="font-display font-semibold text-lg mb-2 group-hover:text-neon-cyan transition-colors">
+                        {{ achievement.title }}
+                    </h3>
+
+                    {% if achievement.organization %}
+                    <p class="text-white/40 text-sm mb-3">{{ achievement.organization }}</p>
+                    {% endif %}
+
+                    <p class="text-white/30 text-sm leading-relaxed">{{ achievement.description|truncatewords:25 }}</p>
+
+                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
+                        {% if achievement.date %}
+                        <span class="font-mono text-xs text-white/20">{{ achievement.date|date:"F Y" }}</span>
+                        {% endif %}
+                        {% if achievement.url %}
+                        <a href="{{ achievement.url }}" target="_blank" class="text-neon-cyan/60 hover:text-neon-cyan text-xs transition-colors" style="cursor: none;">
+                            View →
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-20">
+                <div class="text-6xl mb-4">🏆</div>
+                <p class="text-white/40 font-mono">Add achievements from the admin panel.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- RESEARCH & PUBLICATIONS -->
+<!-- ============================================ -->
+<section id="research" class="section relative">
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-deep-indigo/3 to-transparent"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-16" data-animate>
+            <div class="section-subtitle">// Research Library</div>
+            <h2 class="section-title gradient-text-static">Publications & Research</h2>
+        </div>
+
+        <div class="space-y-6">
+            {% for pub in publications %}
+            <div class="publication-card glass glass-hover rounded-2xl p-8 group"
+                 data-animate data-delay="{{ forloop.counter0 }}*0.1">
+                <div class="flex flex-col md:flex-row md:items-start gap-6">
+                    <!-- Type icon -->
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-electric-blue/20 to-neon-purple/20 flex items-center justify-center flex-shrink-0">
+                        <span class="text-xl">
+                            {% if pub.publication_type == 'journal' %}📄
+                            {% elif pub.publication_type == 'conference' %}🎤
+                            {% elif pub.publication_type == 'book' %}📚
+                            {% elif pub.publication_type == 'preprint' %}📝
+                            {% else %}📋{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <span class="font-mono text-xs text-neon-cyan/60 tracking-wider">{{ pub.get_publication_type_display|upper }}</span>
+                                <h3 class="font-display font-semibold text-xl mt-1 group-hover:text-neon-cyan transition-colors">
+                                    {{ pub.title }}
+                                </h3>
+                            </div>
+                            {% if pub.citations %}
+                            <div class="text-right flex-shrink-0">
+                                <div class="text-2xl font-display font-bold gradient-text">{{ pub.citations }}</div>
+                                <div class="text-xs text-white/30 font-mono">CITATIONS</div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <p class="text-white/40 text-sm mt-2">{{ pub.authors }}</p>
+
+                        {% if pub.journal %}
+                        <p class="text-electric-blue/60 text-sm mt-1 font-medium">{{ pub.journal }}</p>
+                        {% endif %}
+
+                        {% if pub.abstract %}
+                        <p class="text-white/30 text-sm mt-3 leading-relaxed line-clamp-2">{{ pub.abstract }}</p>
+                        {% endif %}
+
+                        <div class="flex items-center gap-4 mt-4 pt-4 border-t border-white/5">
+                            {% if pub.url %}
+                            <a href="{{ pub.url }}" target="_blank" class="text-neon-cyan/60 hover:text-neon-cyan text-sm transition-colors flex items-center gap-1" style="cursor: none;">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                Read Paper
+                            </a>
+                            {% endif %}
+                            {% if pub.pdf %}
+                            <a href="{{ pub.pdf.url }}" target="_blank" class="text-white/30 hover:text-white text-sm transition-colors flex items-center gap-1" style="cursor: none;">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                PDF
+                            </a>
+                            {% endif %}
+                            {% if pub.doi %}
+                            <span class="font-mono text-xs text-white/20">DOI: {{ pub.doi }}</span>
+                            {% endif %}
+                            {% if pub.date %}
+                            <span class="font-mono text-xs text-white/20 ml-auto">{{ pub.date|date:"F Y" }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-20">
+                <div class="text-6xl mb-4">🔬</div>
+                <p class="text-white/40 font-mono">Add publications from the admin panel.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- TESTIMONIALS -->
+<!-- ============================================ -->
+{% if testimonials %}
+<section id="testimonials" class="section relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-animate>
+            <div class="section-subtitle">// Testimonials</div>
+            <h2 class="section-title gradient-text-static">What People Say</h2>
+        </div>
+
+        <div class="relative" data-animate>
+            <div class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory" id="testimonial-carousel">
+                {% for testimonial in testimonials %}
+                <div class="testimonial-card flex-shrink-0 w-full md:w-[400px] glass glass-hover rounded-2xl p-8 snap-center tilt-card">
+                    <!-- Quote -->
+                    <div class="text-4xl text-neon-cyan/20 mb-4">"</div>
+                    <p class="text-white/60 leading-relaxed mb-6">{{ testimonial.content }}</p>
+
+                    <!-- Rating -->
+                    <div class="flex gap-1 mb-4">
+                        {% for i in "12345"|make_list %}
+                        <span class="text-sm {% if forloop.counter <= testimonial.rating %}text-yellow-400{% else %}text-white/10{% endif %}">★</span>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Author -->
+                    <div class="flex items-center gap-4 pt-4 border-t border-white/5">
+                        {% if testimonial.avatar %}
+                        <img src="{{ testimonial.avatar.url }}" alt="{{ testimonial.name }}" class="w-12 h-12 rounded-full object-cover">
+                        {% else %}
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-electric-blue to-neon-purple flex items-center justify-center">
+                            <span class="text-lg font-bold text-white">{{ testimonial.name|first }}</span>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h4 class="font-display font-semibold">{{ testimonial.name }}</h4>
+                            <p class="text-white/40 text-sm">{{ testimonial.title }}{% if testimonial.company %} · {{ testimonial.company }}{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ============================================ -->
+<!-- CONTACT SECTION -->
+<!-- ============================================ -->
+<section id="contact" class="section relative">
+    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent"></div>
+    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-electric-blue/5 blur-[150px]"></div>
+
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-16" data-animate>
+            <div class="section-subtitle">// Get In Touch</div>
+            <h2 class="section-title gradient-text-static">Let's Connect</h2>
+            <p class="text-white/40 max-w-2xl mx-auto mt-4">
+                Have a project in mind or just want to chat? I'd love to hear from you.
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-16">
+            <!-- Terminal-style contact form -->
+            <div data-animate>
+                <div class="glass rounded-2xl overflow-hidden">
+                    <!-- Terminal header -->
+                    <div class="flex items-center gap-2 px-6 py-4 border-b border-white/5 bg-white/3">
+                        <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/60"></div>
+                        <span class="font-mono text-xs text-white/30 ml-4">contact@RAKIB ~ %</span>
+                    </div>
+
+                    <form id="contact-form" class="p-8 space-y-6">
+                        {% csrf_token %}
+                        <div class="font-mono text-sm">
+                            <span class="text-neon-cyan">></span>
+                            <span class="text-white/50"> Enter your name</span>
+                            <input type="text" name="name" required
+                                class="glass-input w-full mt-2 rounded-xl px-4 py-3 text-white font-mono text-sm placeholder-white/25"
+                                placeholder="John Doe">
+                        </div>
+
+                        <div class="font-mono text-sm">
+                            <span class="text-neon-cyan">></span>
+                            <span class="text-white/50"> Enter your email</span>
+                            <input type="email" name="email" required
+                                class="glass-input w-full mt-2 rounded-xl px-4 py-3 text-white font-mono text-sm placeholder-white/25"
+                                placeholder="john@example.com">
+                        </div>
+
+                        <div class="font-mono text-sm">
+                            <span class="text-neon-cyan">></span>
+                            <span class="text-white/50"> Subject</span>
+                            <input type="text" name="subject"
+                                class="glass-input w-full mt-2 rounded-xl px-4 py-3 text-white font-mono text-sm placeholder-white/25"
+                                placeholder="Project Collaboration">
+                        </div>
+
+                        <div class="font-mono text-sm">
+                            <span class="text-neon-cyan">></span>
+                            <span class="text-white/50"> Your message</span>
+                            <textarea name="message" rows="4" required
+                                class="glass-input w-full mt-2 rounded-xl px-4 py-3 text-white font-mono text-sm placeholder-white/25 resize-none"
+                                placeholder="Hello! I'd like to discuss..."></textarea>
+                        </div>
+
+                        <button type="submit" class="magnetic-btn w-full" id="contact-submit">
+                            <span id="submit-text">Send Message</span>
+                            <svg id="submit-icon" class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                            </svg>
+                            <svg id="submit-loading" class="w-5 h-5 ml-2 animate-spin hidden" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                        </button>
+
+                        <div id="form-response" class="hidden font-mono text-sm text-center py-3 rounded-lg"></div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Contact info -->
+            <div data-animate data-delay="0.2" class="space-y-8">
+                <div>
+                    <h3 class="font-display text-2xl font-semibold mb-6">Contact Information</h3>
+                    <div class="space-y-4">
+                        {% if site.email %}
+                        <a href="mailto:{{ site.email }}" class="flex items-center gap-4 glass rounded-xl p-4 group hover:border-neon-cyan/20 transition-all" style="cursor: none;">
+                            <div class="w-10 h-10 rounded-lg bg-neon-cyan/10 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            </div>
+                            <div>
+                                <div class="text-xs text-white/30 font-mono">EMAIL</div>
+                                <div class="text-white/70 group-hover:text-white transition-colors">{{ site.email }}</div>
+                            </div>
+                        </a>
+                        {% endif %}
+
+                        {% if site.github_url %}
+                        <a href="{{ site.github_url }}" target="_blank" class="flex items-center gap-4 glass rounded-xl p-4 group hover:border-neon-cyan/20 transition-all" style="cursor: none;">
+                            <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white/60" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                            </div>
+                            <div>
+                                <div class="text-xs text-white/30 font-mono">GITHUB</div>
+                                <div class="text-white/70 group-hover:text-white transition-colors">{{ site.github_url|cut:"https://github.com/" }}</div>
+                            </div>
+                        </a>
+                        {% endif %}
+
+                        {% if site.linkedin_url %}
+                        <a href="{{ site.linkedin_url }}" target="_blank" class="flex items-center gap-4 glass rounded-xl p-4 group hover:border-neon-cyan/20 transition-all" style="cursor: none;">
+                            <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                            </div>
+                            <div>
+                                <div class="text-xs text-white/30 font-mono">LINKEDIN</div>
+                                <div class="text-white/70 group-hover:text-white transition-colors">Connect on LinkedIn</div>
+                            </div>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Quick commands -->
+                <div class="glass rounded-2xl p-6">
+                    <h4 class="font-mono text-xs text-white/30 tracking-widest mb-4">QUICK COMMANDS</h4>
+                    <div class="space-y-2 font-mono text-sm">
+                        <div class="flex items-center gap-2 text-white/40">
+                            <span class="text-neon-cyan">></span> <span>contact</span>
+                            <span class="text-white/20 ml-2">- Send a message</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-white/40">
+                            <span class="text-neon-cyan">></span> <span>email</span>
+                            <span class="text-white/20 ml-2">- Get email address</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-white/40">
+                            <span class="text-neon-cyan">></span> <span>github</span>
+                            <span class="text-white/20 ml-2">- View GitHub profile</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-white/40">
+                            <span class="text-neon-cyan">></span> <span>linkedin</span>
+                            <span class="text-white/20 ml-2">- Connect on LinkedIn</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Role rotator — CSS transitions instead of GSAP */
+    .role-item {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        display: none;
+    }
+    .role-item.active {
+        opacity: 1;
+        transform: translateY(0);
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ===== ROLE ROTATOR (CSS-TRANSITION BASED) =====
+    (function() {
+        const container = document.getElementById('role-rotator');
+        if (!container) return;
+        const items = container.querySelectorAll('.role-item');
+        if (items.length === 0) return;
+
+        let current = 0;
+        items[0].classList.add('active');
+
+        setInterval(() => {
+            items[current].classList.remove('active');
+            current = (current + 1) % items.length;
+            items[current].classList.add('active');
+        }, 3000);
+    })();
+
+    // ===== COUNTER ANIMATION =====
+    window.addEventListener('portfolioLoaded', () => {
+        document.querySelectorAll('.counter').forEach(counter => {
+            const target = parseInt(counter.dataset.target) || 0;
+            gsap.to(counter, {
+                innerText: target,
+                duration: 2,
+                ease: 'power2.out',
+                snap: { innerText: 1 },
+                scrollTrigger: {
+                    trigger: counter,
+                    start: 'top 85%',
+                }
+            });
+        });
+
+        // Skill bars animation
+        document.querySelectorAll('[data-width]').forEach(bar => {
+            const width = bar.dataset.width;
+            gsap.to(bar, {
+                width: width,
+                duration: 1.5,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: bar,
+                    start: 'top 90%',
+                }
+            });
+        });
+    });
+
+    // ===== PROJECT FILTER =====
+    (function() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const projectCards = document.querySelectorAll('.project-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.dataset.filter;
+
+                // Update active button
+                filterBtns.forEach(b => {
+                    b.classList.remove('active', 'text-neon-cyan', 'border-neon-cyan/30');
+                    b.classList.add('text-white/50', 'border-white/10');
+                });
+                btn.classList.add('active', 'text-neon-cyan', 'border-neon-cyan/30');
+                btn.classList.remove('text-white/50', 'border-white/10');
+
+                // Filter cards
+                projectCards.forEach(card => {
+                    if (filter === 'all' || card.dataset.category === filter) {
+                        gsap.to(card, { opacity: 1, scale: 1, duration: 0.4, display: 'block' });
+                    } else {
+                        gsap.to(card, { opacity: 0, scale: 0.8, duration: 0.4, display: 'none' });
+                    }
+                });
+            });
+        });
+    })();
+
+    // ===== CONTACT FORM =====
+    (function() {
+        const form = document.getElementById('contact-form');
+        if (!form) return;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('contact-submit');
+            const submitText = document.getElementById('submit-text');
+            const submitIcon = document.getElementById('submit-icon');
+            const submitLoading = document.getElementById('submit-loading');
+            const response = document.getElementById('form-response');
+
+            // Loading state
+            submitBtn.disabled = true;
+            submitText.textContent = 'Sending...';
+            submitIcon.classList.add('hidden');
+            submitLoading.classList.remove('hidden');
+            response.classList.add('hidden');
+
+            try {
+                const formData = new FormData(form);
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+                const resp = await fetch('{% url "portfolio:contact_submit" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    }
+                });
+                const data = await resp.json();
+
+                response.classList.remove('hidden');
+                if (data.success) {
+                    response.textContent = '✓ ' + data.message;
+                    response.className = 'font-mono text-sm text-center py-3 rounded-lg bg-green-500/10 text-green-400';
+                    form.reset();
+                } else {
+                    response.textContent = '✗ ' + (data.error || 'Something went wrong.');
+                    response.className = 'font-mono text-sm text-center py-3 rounded-lg bg-red-500/10 text-red-400';
+                }
+            } catch (err) {
+                response.classList.remove('hidden');
+                response.textContent = '✗ Network error. Please try again.';
+                response.className = 'font-mono text-sm text-center py-3 rounded-lg bg-red-500/10 text-red-400';
+            } finally {
+                submitBtn.disabled = false;
+                submitText.textContent = 'Send Message';
+                submitIcon.classList.remove('hidden');
+                submitLoading.classList.add('hidden');
+            }
+        });
+    })();
+
+    // ===== SKILLS GALAXY ROTATION (RAF-BASED) =====
+    (function() {
+        const galaxy = document.getElementById('skills-galaxy');
+        if (!galaxy) return;
+
+        let isDragging = false;
+        let startX = 0;
+        let rotationY = 0;
+        let rotationX = 0;
+        let autoRotate = true;
+
+        galaxy.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const delta = e.clientX - startX;
+            rotationY += delta * 0.5;
+            startX = e.clientX;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Pause auto-rotate on hover
+        galaxy.addEventListener('mouseenter', () => autoRotate = false);
+        galaxy.addEventListener('mouseleave', () => autoRotate = true);
+
+        // Single RAF loop instead of setInterval
+        let lastFrame = performance.now();
+        function rotateGalaxy(now) {
+            const delta = (now - lastFrame) / 1000;
+            lastFrame = now;
+            if (!isDragging && autoRotate) {
+                rotationY += delta * 70;
+            }
+            galaxy.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+            requestAnimationFrame(rotateGalaxy);
+        }
+        requestAnimationFrame(rotateGalaxy);
+    })();
+
+    // ===== TESTIMONIAL CAROUSEL AUTO-SCROLL (RAF-BASED) =====
+    (function() {
+        const carousel = document.getElementById('testimonial-carousel');
+        if (!carousel || carousel.scrollWidth <= carousel.clientWidth) return;
+
+        let scrollAmount = 0;
+        const scrollSpeed = 0.5;
+        let paused = false;
+
+        carousel.addEventListener('mouseenter', () => paused = true);
+        carousel.addEventListener('mouseleave', () => paused = false);
+
+        function autoScroll() {
+            if (!paused && carousel.scrollWidth > carousel.clientWidth) {
+                scrollAmount += scrollSpeed;
+                if (scrollAmount >= carousel.scrollWidth - carousel.clientWidth) {
+                    scrollAmount = 0;
+                }
+                carousel.scrollTo({ left: scrollAmount, behavior: 'auto' });
+            }
+            requestAnimationFrame(autoScroll);
+        }
+        // Start after 3 second delay
+        setTimeout(() => requestAnimationFrame(autoScroll), 3000);
+    })();
+</script>
+{% endblock %}

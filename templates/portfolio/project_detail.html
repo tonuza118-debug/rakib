@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="section relative pt-32">
+    <div class="max-w-5xl mx-auto px-6">
+        <!-- Back button -->
+        <a href="/#projects" class="inline-flex items-center gap-2 text-white/40 hover:text-neon-cyan transition-colors mb-8 font-mono text-sm" style="cursor: none;">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/></svg>
+            Back to Projects
+        </a>
+
+        <!-- Project header -->
+        <div class="mb-12" data-animate>
+            <div class="flex items-center gap-3 mb-4">
+                <span class="font-mono text-xs px-3 py-1 rounded-full
+                    {% if project.status == 'completed' %}bg-green-500/10 text-green-400
+                    {% elif project.status == 'in_progress' %}bg-yellow-500/10 text-yellow-400
+                    {% else %}bg-white/5 text-white/50{% endif %}">
+                    {{ project.get_status_display }}
+                </span>
+                {% if project.featured %}
+                <span class="font-mono text-xs px-3 py-1 rounded-full bg-gradient-to-r from-electric-blue/20 to-neon-purple/20 text-white">★ Featured</span>
+                {% endif %}
+                {% if project.category %}
+                <span class="text-white/30 font-mono text-xs">{{ project.category.name }}</span>
+                {% endif %}
+            </div>
+
+            <h1 class="section-title gradient-text-static mb-6">{{ project.title }}</h1>
+            <p class="text-white/50 text-lg leading-relaxed">{{ project.description }}</p>
+        </div>
+
+        <!-- Project image -->
+        {% if project.image %}
+        <div class="glass rounded-2xl overflow-hidden mb-12" data-animate>
+            <img src="{{ project.image.url }}" alt="{{ project.title }}" class="w-full h-auto">
+        </div>
+        {% endif %}
+
+        <!-- Project Gallery (Multiple Images) -->
+        {% if project.images.all %}
+        <div class="mb-12" data-animate>
+            <h3 class="font-display text-xl font-semibold mb-4">Project Gallery</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {% for img in project.images.all %}
+                <div class="glass rounded-xl overflow-hidden group cursor-pointer" onclick="openLightbox('{{ img.image.url }}')" style="cursor: none;">
+                    <img src="{{ img.image.url }}" alt="{{ img.caption|default:project.title }}" class="w-full h-40 object-cover transition-transform duration-500 group-hover:scale-110">
+                    {% if img.caption %}
+                    <div class="p-2 text-center">
+                        <span class="text-xs text-white/40 font-mono">{{ img.caption }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Project video -->
+        {% if project.video_url %}
+        <div class="mb-12" data-animate>
+            <h3 class="font-display text-xl font-semibold mb-4">Project Video</h3>
+            <div class="glass rounded-2xl overflow-hidden aspect-video">
+                {% if "youtube.com" in project.video_url or "youtu.be" in project.video_url %}
+                    {% if "youtu.be" in project.video_url %}
+                        {% with video_id=project.video_url|cut:"https://youtu.be/" %}
+                        <iframe src="https://www.youtube.com/embed/{{ video_id }}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        {% endwith %}
+                    {% elif "embed" in project.video_url %}
+                        <iframe src="{{ project.video_url }}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    {% else %}
+                        {% with video_id=project.video_url|cut:"https://www.youtube.com/watch?v=" %}
+                        <iframe src="https://www.youtube.com/embed/{{ video_id }}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        {% endwith %}
+                    {% endif %}
+                {% elif "drive.google.com" in project.video_url %}
+                    <iframe src="{{ project.video_url|cut:"/view?usp=sharing"|cut:"/view" }}/preview" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+                {% else %}
+                    <iframe src="{{ project.video_url }}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Technologies -->
+        {% if project.technologies %}
+        <div class="mb-12" data-animate>
+            <h3 class="font-display text-xl font-semibold mb-4">Technologies Used</h3>
+            <div class="flex flex-wrap gap-3">
+                {% for tech in project.technologies %}
+                <span class="glass px-4 py-2 rounded-full text-sm text-white/60 hover:text-neon-cyan hover:border-neon-cyan/30 transition-all">{{ tech }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Links -->
+        <div class="flex flex-wrap gap-4 mb-12" data-animate>
+            {% if project.github_url %}
+            <a href="{{ project.github_url }}" target="_blank" class="magnetic-btn">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                View Source Code
+            </a>
+            {% endif %}
+            {% if project.live_url %}
+            <a href="{{ project.live_url }}" target="_blank" class="magnetic-btn">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                Live Demo
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Related projects -->
+        {% if related_projects %}
+        <div data-animate>
+            <h3 class="font-display text-xl font-semibold mb-6">Related Projects</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                {% for rp in related_projects %}
+                <a href="{% url 'portfolio:project_detail' rp.slug %}" class="glass rounded-xl p-4 group hover:border-electric-blue/30 transition-all tilt-card" style="cursor: none;">
+                    {% if rp.image %}
+                    <img src="{{ rp.image.url }}" alt="{{ rp.title }}" class="w-full h-32 object-cover rounded-lg mb-3">
+                    {% endif %}
+                    <h4 class="font-display font-semibold group-hover:text-neon-cyan transition-colors">{{ rp.title }}</h4>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ===== LIGHTBOX FOR PROJECT GALLERY =====
+    function openLightbox(src) {
+        const overlay = document.createElement('div');
+        overlay.id = 'gallery-lightbox';
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);';
+        overlay.innerHTML = `<img src="${src}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;box-shadow:0 0 60px rgba(59,130,246,0.2);"><button style="position:absolute;top:24px;right:24px;background:rgba(255,255,255,0.1);border:none;color:white;font-size:28px;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:sans-serif;" onclick="closeLightbox()">×</button>`;
+        overlay.onclick = function(e) { if (e.target === overlay) closeLightbox(); };
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+        const lb = document.getElementById('gallery-lightbox');
+        if (lb) { lb.remove(); document.body.style.overflow = ''; }
+    }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
+</script>
+{% endblock %}

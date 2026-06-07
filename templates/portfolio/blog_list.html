@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section relative pt-32">
+    <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center mb-16" data-animate>
+            <div class="section-subtitle">// Blog</div>
+            <h1 class="section-title gradient-text-static">Articles & Thoughts</h1>
+        </div>
+
+        <div class="space-y-8">
+            {% for post in posts %}
+            <article class="glass rounded-2xl p-8 group hover:border-neon-cyan/20 transition-all" data-animate data-delay="{{ forloop.counter0 }}*0.1">
+                <a href="{% url 'portfolio:blog_detail' post.slug %}" style="cursor: none;">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="font-mono text-xs text-neon-cyan/60">{{ post.published_at|date:"F d, Y" }}</span>
+                        {% for tag in post.tags|slice:":3" %}
+                        <span class="text-xs text-white/30 bg-white/5 px-2 py-0.5 rounded">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    <h2 class="font-display text-2xl font-semibold mb-3 group-hover:text-neon-cyan transition-colors">{{ post.title }}</h2>
+                    <p class="text-white/40 leading-relaxed">{{ post.excerpt|default:post.content|truncatewords:40 }}</p>
+                    <span class="inline-block mt-4 text-neon-cyan/60 text-sm group-hover:text-neon-cyan transition-colors">Read more →</span>
+                </a>
+            </article>
+            {% empty %}
+            <div class="text-center py-20">
+                <div class="text-6xl mb-4">📝</div>
+                <p class="text-white/40 font-mono">No blog posts yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
