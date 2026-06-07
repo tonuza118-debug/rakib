@@ -13,7 +13,6 @@
         }
     ],
     "env": {
-        "DJANGO_SETTINGS_MODULE": "portfolio_project.settings",
-        "PIP_BREAK_SYSTEM_PACKAGES": "1"
+        "DJANGO_SETTINGS_MODULE": "portfolio_project.settings"
     }
 }
