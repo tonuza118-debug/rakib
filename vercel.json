@@ -1,5 +1,11 @@
 {
     "version": 2,
+    "builds": [
+        {
+            "src": "portfolio_project/wsgi.py",
+            "use": "@vercel/python"
+        }
+    ],
     "routes": [
         {
             "src": "/(.*)",
@@ -7,6 +13,7 @@
         }
     ],
     "env": {
-        "DJANGO_SETTINGS_MODULE": "portfolio_project.settings"
+        "DJANGO_SETTINGS_MODULE": "portfolio_project.settings",
+        "PIP_BREAK_SYSTEM_PACKAGES": "1"
     }
 }
