@@ -11,6 +11,4 @@ urlpatterns = [
     path('blog/', views.blog_list, name='blog_list'),
     path('blog/<slug:slug>/', views.blog_detail, name='blog_detail'),
     path('contact/', views.contact_submit, name='contact_submit'),
-    # TEMPORARY: Run fix_cloudinary_images then remove this line
-    path('fix-images/', views.fix_cloudinary_images_view, name='fix_cloudinary_images'),
 ]
