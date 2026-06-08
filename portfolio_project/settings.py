@@ -114,8 +114,8 @@ api_key = os.environ.get('CLOUDINARY_API_KEY', '')
 api_secret = os.environ.get('CLOUDINARY_API_SECRET', '')
 
 if cloud_name and api_key and api_secret:
-    # Production: use Cloudinary for media storage
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # Production: use custom Cloudinary storage (underscores in public_ids)
+    DEFAULT_FILE_STORAGE = 'core.storage.custom_cloudinary.CustomMediaCloudinaryStorage'
     MEDIA_URL = f'https://res.cloudinary.com/{cloud_name}/image/upload/'
     CLOUDINARY_STORAGE = {
         'CLOUD_NAME': cloud_name,
@@ -126,6 +126,7 @@ else:
     # Local development: use default file storage
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     MEDIA_URL = '/media/'
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
