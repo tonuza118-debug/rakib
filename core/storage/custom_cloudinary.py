@@ -63,16 +63,24 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
 
         The 'name' parameter is the value stored in the database,
         which is the public_id returned by _save().
-        Cloudinary serves images by public_id (no extension needed in the URL).
+        Cloudinary serves images by public_id (no extension in the URL).
         """
-        # name IS the public_id stored in the database
         public_id = name
 
-        # If somehow the value still contains slashes (from older data), convert them
+        # Handle old data: convert slashes to underscores, strip file extension
         if '/' in public_id:
             public_id = public_id.replace('/', '_')
 
-        # Build the full Cloudinary URL
+        # Strip file extension if present (e.g. ".jpg", ".png", ".webp")
+        # Cloudinary public_ids never include the file extension.
+        if '.' in public_id:
+            public_id = public_id.rsplit('.', 1)[0]
+
+        # Normalize: collapse multiple underscores, strip leading/trailing
+        while '__' in public_id:
+            public_id = public_id.replace('__', '_')
+        public_id = public_id.strip('_')
+
         return cloudinary.CloudinaryImage(public_id).build_url()
 
     def get_valid_name(self, name):
