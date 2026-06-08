@@ -80,6 +80,8 @@ def version_check(request):
 
     src = inspect.getsource(custom_cloudinary.CustomMediaCloudinaryStorage._upload)
     has_use_filename = 'use_filename' in src
+    # Check the docstring to verify which version is loaded
+    doc = custom_cloudinary.CustomMediaCloudinaryStorage._upload.__doc__ or ''
 
     # Actually test an upload
     test_result = 'not tested'
@@ -137,6 +139,7 @@ def version_check(request):
 
     return JsonResponse({
         'has_use_filename': has_use_filename,
+        'upload_docstring': doc[:100],
         'storage_class': type(custom_cloudinary.CustomMediaCloudinaryStorage).__name__,
         'test_stored_value': test_stored,
         'test_url': test_url,

@@ -17,7 +17,7 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
     """
 
     def _upload(self, name, content):
-        """Upload file to Cloudinary with underscored public_id."""
+        """Upload file to Cloudinary with underscored public_id. V3"""
         # Build a clean public_id from the file path:
         # e.g. "projects/gallery/my_photo.jpg" -> "projects_gallery_my_photo"
         public_id = name.replace('/', '_')
