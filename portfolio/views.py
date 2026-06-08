@@ -228,7 +228,7 @@ def test_cloudinary_upload(request):
             'default_storage_class': type(default_storage).__name__,
             'CLOUDINARY_STORAGE': str(getattr(django_settings, 'CLOUDINARY_STORAGE', {})),
             'storage_source_snippet': storage_source[:500] if storage_source else 'N/A',
-            'disk_source_snippet': disk_source[:500] if disk_source else 'N/A',
+            'disk_source_snippet': disk_source[:2000] if disk_source else 'N/A',
             'pyc_info': pyc_info,
             'message': 'Image uploaded and URL resolves!' if url_works else 'Image uploaded but URL does NOT resolve',
         }
