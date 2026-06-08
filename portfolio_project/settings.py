@@ -3,20 +3,9 @@ Django settings for portfolio_project - 3D Interactive Portfolio
 """
 
 import os
-import shutil
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
-
-# Clear stale __pycache__ directories before any Django imports.
-# Render doesn't clear Python bytecode cache between deploys, which causes
-# old .pyc files to be loaded instead of updated .py source files.
-_base = Path(__file__).resolve().parent.parent
-for _cache_dir in _base.rglob('__pycache__'):
-    try:
-        shutil.rmtree(_cache_dir)
-    except OSError:
-        pass
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
