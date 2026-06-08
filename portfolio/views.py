@@ -238,13 +238,55 @@ def fix_cloudinary_images_view(request):
                                 'stored': stored_str,
                             })
 
+    # Known manual fixes: DB value -> correct Cloudinary public_id
+    # These are images where we can confidently match the DB value to the real public_id
+    manual_fixes = {
+        # Avatar: filename is the same, timestamp differs slightly
+        'profile_WhatsApp_Image_2026-04-02_at_11_5Rmoe1a.28.00_PM':
+            'profile_WhatsApp_Image_2026-04-02_at_10.28.02_AM_1',
+        # Avatar also has a folder-based version in Cloudinary
+        'profile_WhatsApp_Image_2026-04-02_at_11_5Rmoe1a.28.00_PM_1':
+            'profile_WhatsApp_Image_2026-04-02_at_10.28.02_AM_1',
+    }
+
+    manual_fixed = []
+    if apply:
+        for app_label in target_apps:
+            try:
+                app_config = apps.get_app_config(app_label)
+            except LookupError:
+                continue
+            for model in app_config.get_models():
+                image_fields = [f.name for f in model._meta.get_fields()
+                               if isinstance(f, image_field_types)]
+                for obj in model.objects.all():
+                    for field_name in image_fields:
+                        stored = str(getattr(obj, field_name, '') or '').strip()
+                        if stored in manual_fixes:
+                            correct = manual_fixes[stored]
+                            setattr(obj, field_name, correct)
+                            obj.save(update_fields=[field_name])
+                            manual_fixed.append({
+                                'model': f'{app_label}.{model.__name__}',
+                                'id': obj.pk,
+                                'field': field_name,
+                                'old': stored,
+                                'new': correct,
+                                'url': cloudinary_map.get(correct, 'N/A'),
+                            })
+
     return JsonResponse({
         'status': 'complete',
         'mode': 'APPLIED' if apply else 'DRY RUN',
         'ok': ok_count,
-        'fixed': len(fixed),
+        'auto_fixed': len(fixed),
+        'manual_fixed': len(manual_fixed),
         'broken': len(broken),
-        'fixed_details': fixed,
+        'auto_fixed_details': fixed,
+        'manual_fixed_details': manual_fixed,
         'broken_details': broken,
-        'message': f'{len(fixed)} images {"fixed" if apply else "can be fixed"}. {len(broken)} images need re-upload (not in Cloudinary).'
+        'message': (
+            f'{len(fixed)} auto-fixed, {len(manual_fixed)} manually matched, '
+            f'{len(broken)} need re-upload (not in Cloudinary).'
+        )
     }, json_dumps_params={'indent': 2})
