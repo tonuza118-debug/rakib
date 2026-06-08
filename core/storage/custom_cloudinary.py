@@ -1,20 +1,16 @@
 """Custom Cloudinary storage that uses underscores instead of slashes in public_ids."""
 import os
 import cloudinary
+import cloudinary.uploader
 from cloudinary_storage.storage import MediaCloudinaryStorage
+from django.core.files.uploadedfile import UploadedFile
 
 
 class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
     """
     Custom Cloudinary storage that replaces slashes with underscores in public_ids.
-
-    By default, django-cloudinary-storage creates folder-based public_ids like:
-        projects/gallery/filename.jpg
-
-    This custom storage converts them to:
-        projects_gallery_filename.jpg
-
-    This ensures consistent URL formatting and avoids broken image URLs.
+    django-cloudinary-storage creates folder-based public_ids like: projects/gallery/filename.jpg
+    This custom storage converts them to: projects_gallery_filename
     """
 
     def _upload(self, name, content):
@@ -22,12 +18,24 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
             'use_filename': True,
             'resource_type': self._get_resource_type(name),
             'tags': self.TAG,
+            'invalidate': True,
         }
-        # Use the full path with underscores instead of folder structure
-        # e.g., "projects/gallery/image.jpg" → "projects_gallery_image"
+        # Build a clean public_id: replace slashes with underscores, remove extension
         public_id = name.replace('/', '_')
-        # Remove file extension from public_id (Cloudinary adds it automatically)
         if '.' in public_id:
             public_id = public_id.rsplit('.', 1)[0]
         options['public_id'] = public_id
-        return cloudinary.uploader.upload(content, **options)
+        response = cloudinary.uploader.upload(content, **options)
+        return response
+
+    def _save(self, name, content):
+        """Save file to Cloudinary and return the clean public_id."""
+        name = self._normalise_name(name)
+        content = UploadedFile(content, name)
+        response = self._upload(name, content)
+        return response['public_id']
+
+    def url(self, name):
+        """Generate Cloudinary URL from public_id."""
+        base = self._get_prefix()
+        return f'{base}{name}'

@@ -22,6 +22,8 @@ CSRF_TRUSTED_ORIGINS = [
 
 # Application definition
 INSTALLED_APPS = [
+    'cloudinary',
+    'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,8 +31,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Third party
-    'cloudinary',
-    'cloudinary_storage',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
@@ -108,24 +108,19 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Media files
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Cloudinary configuration — set these env vars in production
-cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', '')
-api_key = os.environ.get('CLOUDINARY_API_KEY', '')
-api_secret = os.environ.get('CLOUDINARY_API_SECRET', '')
+# Cloudinary configuration — works both locally and in production
+cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', 'dwcazkqlm')
+api_key = os.environ.get('CLOUDINARY_API_KEY', '112936847494325')
+api_secret = os.environ.get('CLOUDINARY_API_SECRET', 'RuGdHTx9EZVYpASgkt0UJub8504')
 
-if cloud_name and api_key and api_secret:
-    # Production: use custom Cloudinary storage (underscores in public_ids)
-    DEFAULT_FILE_STORAGE = 'core.storage.custom_cloudinary.CustomMediaCloudinaryStorage'
-    MEDIA_URL = f'https://res.cloudinary.com/{cloud_name}/image/upload/'
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': cloud_name,
-        'API_KEY': api_key,
-        'API_SECRET': api_secret,
-    }
-else:
-    # Local development: use default file storage
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    MEDIA_URL = '/media/'
+# Always use custom Cloudinary storage (underscores in public_ids)
+DEFAULT_FILE_STORAGE = 'core.storage.custom_cloudinary.CustomMediaCloudinaryStorage'
+MEDIA_URL = f'https://res.cloudinary.com/{cloud_name}/image/upload/'
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': cloud_name,
+    'API_KEY': api_key,
+    'API_SECRET': api_secret,
+}
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
