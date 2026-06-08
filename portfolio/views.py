@@ -72,6 +72,18 @@ def blog_detail(request, slug):
     return render(request, 'portfolio/blog_detail.html', {'post': post})
 
 
+def version_check(request):
+    """Quick endpoint to verify which code version is running. Remove after testing."""
+    import inspect
+    from core.storage import custom_cloudinary
+    src = inspect.getsource(custom_cloudinary.CustomMediaCloudinaryStorage._upload)
+    has_use_filename = 'use_filename' in src
+    return JsonResponse({
+        'has_use_filename': has_use_filename,
+        'storage_class': type(custom_cloudinary.CustomMediaCloudinaryStorage).__name__,
+    })
+
+
 @require_POST
 def contact_submit(request):
     """Handle contact form submission."""

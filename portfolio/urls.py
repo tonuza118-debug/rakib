@@ -11,4 +11,6 @@ urlpatterns = [
     path('blog/', views.blog_list, name='blog_list'),
     path('blog/<slug:slug>/', views.blog_detail, name='blog_detail'),
     path('contact/', views.contact_submit, name='contact_submit'),
+    # TEMPORARY: Remove after testing
+    path('version-check/', views.version_check, name='version_check'),
 ]
