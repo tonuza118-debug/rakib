@@ -105,21 +105,27 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # WhiteNoise for static file serving (collectstatic copies admin/css/js here)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files — Cloudinary storage for production
-MEDIA_URL = '/media/'
+# Media files
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Cloudinary configuration (set env vars in production)
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
-}
+# Cloudinary configuration — set these env vars in production
+cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', '')
+api_key = os.environ.get('CLOUDINARY_API_KEY', '')
+api_secret = os.environ.get('CLOUDINARY_API_SECRET', '')
 
-# Use Cloudinary for media storage if credentials are set, otherwise local
-if CLOUDINARY_STORAGE['CLOUD_NAME']:
+if cloud_name and api_key and api_secret:
+    # Production: use Cloudinary for media storage
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = f'https://res.cloudinary.com/{CLOUDINARY_STORAGE["CLOUD_NAME"]}/image/upload/'
+    MEDIA_URL = f'https://res.cloudinary.com/{cloud_name}/image/upload/'
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': cloud_name,
+        'API_KEY': api_key,
+        'API_SECRET': api_secret,
+    }
+else:
+    # Local development: use default file storage
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
