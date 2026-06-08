@@ -5,21 +5,19 @@ Django settings for portfolio_project - 3D Interactive Portfolio
 import os
 from pathlib import Path
 from datetime import timedelta
-from decouple import config, Csv
-import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('DJANGO_SECRET_KEY', default='django-insecure-sq1@%ge(pu-yzosrqv&k*+v-1b*(j%61*4xtbvdz47k$q$t)#^')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-sq1@%ge(pu-yzosrqv&k*+v-1b*(j%61*4xtbvdz47k$q$t)#^')
 
-DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='*', cast=Csv())
+# PythonAnywhere will set this to your domain, e.g. 'yourusername.pythonanywhere.com'
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-# CSRF — allow all origins (Django 4.0+ requires scheme)
 CSRF_TRUSTED_ORIGINS = [
-    'https://*',
-    'http://*',
+    'https://*.pythonanywhere.com',
+    'http://*.pythonanywhere.com',
 ]
 
 # Application definition
@@ -33,7 +31,6 @@ INSTALLED_APPS = [
     # Third party
     'rest_framework',
     'rest_framework_simplejwt',
-    'corsheaders',
     # Local apps
     'core',
     'portfolio',
@@ -42,15 +39,12 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.VisitorCounterMiddleware',
 ]
 
 ROOT_URLCONF = 'portfolio_project.urls'
@@ -73,23 +67,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'portfolio_project.wsgi.application'
 
-# Database
-_database_url = config('DATABASE_URL', default='')
-if _database_url:
-    DATABASES = {
-        'default': dj_database_url.parse(
-            _database_url,
-            conn_max_age=600,
-            conn_health_checks=True,
-        ),
+# Database — SQLite works great on PythonAnywhere (real filesystem)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -105,33 +89,22 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# Static files — PythonAnywhere serves these via web tab config
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise — use manifest storage for proper caching
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Media files
+# Media files (user uploads: profile images, project screenshots, etc.)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Security settings (serverless-compatible)
-# Trust Vercel's proxy headers for HTTPS detection
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-USE_X_FORWARDED_HOST = True
-
+# Security
 if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
-    # HSTS — enable after confirming HTTPS works
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
 
 # Django REST Framework
 REST_FRAMEWORK = {
@@ -152,9 +125,6 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
 }
-
-# CORS — allow all origins
-CORS_ALLOW_ALL_ORIGINS = True
 
 # Cache
 CACHES = {
