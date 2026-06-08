@@ -131,12 +131,17 @@ def test_cloudinary_upload(request):
         return JsonResponse({'error': 'Unauthorized'}, status=403)
 
     try:
+        # Clean up any previous test projects
+        Project.objects.filter(slug__startswith='cloudinary-upload-test').delete()
+
         # Create a test project with an image
         png = _make_test_png()
+        import time
+        ts = int(time.time())
 
         project = Project.objects.create(
-            title='Cloudinary Upload Test',
-            slug='cloudinary-upload-test',
+            title='Cloudinary Upload Test ' + str(ts),
+            slug='cloudinary-upload-test-' + str(ts),
             description='Testing Cloudinary upload from the deployed site',
             short_description='Test',
             status='completed',
