@@ -13,7 +13,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-sq1@%ge(pu-yzo
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 # PythonAnywhere will set this to your domain, e.g. 'yourusername.pythonanywhere.com'
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,arko118.pythonanywhere.com').split(',')
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.pythonanywhere.com',
@@ -72,10 +72,10 @@ WSGI_APPLICATION = 'portfolio_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'YOUR_USERNAME$portfolio_db'),
-        'USER': os.environ.get('DB_USER', 'YOUR_USERNAME'),
+        'NAME': os.environ.get('DB_NAME', 'arko118$portfolio_db'),
+        'USER': os.environ.get('DB_USER', 'arko118'),
         'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', 'YOUR_USERNAME.mysql.pythonanywhere-services.com'),
+        'HOST': os.environ.get('DB_HOST', 'arko118.mysql.pythonanywhere-services.com'),
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
