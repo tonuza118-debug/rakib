@@ -1,10 +1,15 @@
 """Portfolio views - all data passed to the single-page 3D portfolio template."""
 
+import os
+import io
+import struct
+import zlib
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib import messages
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from .models import (
     Profile, SkillCategory, Skill, ProjectCategory, Project,
     Education, Experience, Achievement, Publication,
@@ -98,4 +103,89 @@ def contact_submit(request):
         return JsonResponse({
             'success': False,
             'error': 'An error occurred. Please try again.'
+        }, status=500)
+
+
+def _make_test_png():
+    """Create a minimal 2x2 red PNG in memory."""
+    sig = b'\x89PNG\r\n\x1a\n'
+    ihdr_data = struct.pack('>IIBBBBB', 2, 2, 8, 2, 0, 0, 0)
+    ihdr_crc = zlib.crc32(b'IHDR' + ihdr_data) & 0xffffffff
+    ihdr = struct.pack('>I', 13) + b'IHDR' + ihdr_data + struct.pack('>I', ihdr_crc)
+    raw = b'\xff\x00\x00\xff\x00\x00\xff\x00\x00\xff\x00\x00'
+    compressed = zlib.compress(raw)
+    idat_crc = zlib.crc32(b'IDAT' + compressed) & 0xffffffff
+    idat = struct.pack('>I', len(compressed)) + b'IDAT' + compressed + struct.pack('>I', idat_crc)
+    iend_crc = zlib.crc32(b'IEND') & 0xffffffff
+    iend = struct.pack('>I', 0) + b'IEND' + struct.pack('>I', iend_crc)
+    data = sig + ihdr + idat + iend
+    buf = io.BytesIO(data)
+    return InMemoryUploadedFile(buf, 'image', 'test_upload.png', 'image/png', len(data), None)
+
+
+@require_GET
+def test_cloudinary_upload(request):
+    """Temporary endpoint to test Cloudinary image upload. Remove after testing."""
+    secret = request.GET.get('key', '')
+    if secret != 'test-upload-2026':
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    try:
+        # Create a test project with an image
+        png = _make_test_png()
+
+        project = Project.objects.create(
+            title='Cloudinary Upload Test',
+            slug='cloudinary-upload-test',
+            description='Testing Cloudinary upload from the deployed site',
+            short_description='Test',
+            status='completed',
+            featured=False,
+            order=999,
+            image=png,
+        )
+
+        # Get the stored value
+        project.refresh_from_db()
+        stored_value = str(project.image.name) if project.image else None
+        image_url = project.image.url if project.image else None
+
+        # Verify the URL resolves
+        import urllib.request
+        url_works = False
+        url_status = 'N/A'
+        if image_url:
+            try:
+                req = urllib.request.Request(image_url, method='HEAD')
+                resp = urllib.request.urlopen(req, timeout=10)
+                url_status = resp.status
+                url_works = resp.status == 200
+            except Exception as e:
+                url_status = str(e)
+
+        result = {
+            'status': 'success',
+            'project_id': project.id,
+            'stored_value': stored_value,
+            'image_url': image_url,
+            'url_resolves': url_works,
+            'url_status': url_status,
+            'message': 'Image uploaded and URL resolves!' if url_works else 'Image uploaded but URL does NOT resolve',
+        }
+
+        # Clean up - delete the test project
+        if not request.GET.get('keep'):
+            project.delete()
+            result['cleaned_up'] = True
+        else:
+            result['cleaned_up'] = False
+
+        return JsonResponse(result, json_dumps_params={'indent': 2})
+
+    except Exception as e:
+        import traceback
+        return JsonResponse({
+            'status': 'error',
+            'error': str(e),
+            'traceback': traceback.format_exc(),
         }, status=500)
