@@ -168,6 +168,10 @@ def test_cloudinary_upload(request):
             except Exception as e:
                 url_status = str(e)
 
+        # Also report which storage backend is active
+        from django.conf import settings as django_settings
+        from django.core.files.storage import default_storage
+
         result = {
             'status': 'success',
             'project_id': project.id,
@@ -175,6 +179,8 @@ def test_cloudinary_upload(request):
             'image_url': image_url,
             'url_resolves': url_works,
             'url_status': url_status,
+            'storage_backend': str(django_settings.DEFAULT_FILE_STORAGE),
+            'storage_class': type(default_storage).__name__,
             'message': 'Image uploaded and URL resolves!' if url_works else 'Image uploaded but URL does NOT resolve',
         }
 
