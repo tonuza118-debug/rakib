@@ -14,11 +14,13 @@ urlpatterns = [
     path('', include('portfolio.urls')),
 ]
 
-# Serve media files in all environments
-from django.views.static import serve
-urlpatterns += [
-    path('media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}),
-]
+# Serve media files only in DEBUG mode (local development).
+# In production (Render), Cloudinary URLs are absolute and served from Cloudinary's CDN.
+if settings.DEBUG:
+    from django.views.static import serve
+    urlpatterns += [
+        path('media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

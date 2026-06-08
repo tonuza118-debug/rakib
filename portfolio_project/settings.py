@@ -20,6 +20,11 @@ CSRF_TRUSTED_ORIGINS = [
     'http://*',
 ]
 
+# Cloudinary credentials — loaded from environment early so cloudinary_storage can validate
+CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME', '')
+CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY', '')
+CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET', '')
+
 # Application definition
 INSTALLED_APPS = [
     'cloudinary',
@@ -105,21 +110,25 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # WhiteNoise for static file serving (collectstatic copies admin/css/js here)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files
+# Media files (local fallback — for dev without Cloudinary creds)
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Cloudinary configuration — works both locally and in production
-cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', 'dwcazkqlm')
-api_key = os.environ.get('CLOUDINARY_API_KEY', '112936847494325')
-api_secret = os.environ.get('CLOUDINARY_API_SECRET', 'RuGdHTx9EZVYpASgkt0UJub8504')
+# Cloudinary storage backend — active when all 3 env vars are set
+# On Render, all 3 are always set, so this is always active in production.
+if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
+    DEFAULT_FILE_STORAGE = 'core.storage.custom_cloudinary.CustomMediaCloudinaryStorage'
+    MEDIA_URL = f'https://res.cloudinary.com/{CLOUDINARY_CLOUD_NAME}/image/upload/'
+else:
+    # Local filesystem storage (development without Cloudinary)
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    MEDIA_URL = '/media/'
 
-# Always use custom Cloudinary storage (underscores in public_ids)
-DEFAULT_FILE_STORAGE = 'core.storage.custom_cloudinary.CustomMediaCloudinaryStorage'
-MEDIA_URL = f'https://res.cloudinary.com/{cloud_name}/image/upload/'
+# CLOUDINARY_STORAGE must always be defined (django-cloudinary-storage reads it at import time).
+# When local storage is used, the values don't matter but the keys must exist.
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': cloud_name,
-    'API_KEY': api_key,
-    'API_SECRET': api_secret,
+    'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
+    'API_KEY': CLOUDINARY_API_KEY,
+    'API_SECRET': CLOUDINARY_API_SECRET,
 }
 
 
