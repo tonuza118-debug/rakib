@@ -86,3 +86,5 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
     def get_valid_name(self, name):
         """Return the name suitable for storage (underscored, no slashes)."""
         return name.replace('/', '_') if name else name
+# Cache bust: Tue Jun  9 02:46:59 BST 2026
+# Build: fac30a1672f18880543f7592d784cd8bca14e99b

@@ -178,14 +178,44 @@ def test_cloudinary_upload(request):
         if hasattr(django_settings, 'STORAGES'):
             stores_info['STORAGES'] = str(getattr(django_settings, 'STORAGES', {}))
 
-        # Read the actual storage source file to check which version is deployed
+        # Read the actual storage source file and the raw source on disk
         storage_source = ''
+        disk_source = ''
+        pyc_info = ''
         try:
             import inspect
             from core.storage import custom_cloudinary
             storage_source = inspect.getsource(custom_cloudinary.CustomMediaCloudinaryStorage._upload)
         except Exception as e:
             storage_source = 'Error reading: ' + str(e)
+
+        # Also read the actual file from disk
+        try:
+            import core.storage.custom_cloudinary as m
+            import os
+            fpath = os.path.abspath(m.__file__)
+            if fpath.endswith('.pyc'):
+                pyc_info = fpath
+                fpath = fpath[:-4] + '.py' if fpath.endswith('.pyc') else fpath[:-1]
+            with open(fpath.replace('.pyc', '.py') if fpath.endswith('.pyc') else fpath.rsplit('.',1)[0] + '.py') as f:
+                disk_source = f.read()[:600]
+        except Exception as e:
+            disk_source = 'Error: ' + str(e)
+
+        # List pycache
+        try:
+            import glob
+            cache_dir = os.path.join(os.path.dirname(os.path.abspath(
+                __import__('core.storage.custom_cloudinary', fromlist=['']).__file__
+            )), '__pycache__')
+            pyc_files = glob.glob(cache_dir + '/*cloudinary*') if os.path.exists(cache_dir) else []
+            if not pyc_files:
+                # Try parent
+                parent = os.path.dirname(cache_dir)
+                pyc_files = glob.glob(parent + '/__pycache__/*cloudinary*')
+            pyc_info = str(pyc_files)
+        except Exception as e:
+            pyc_info = str(e)
 
         result = {
             'status': 'success',
@@ -198,6 +228,8 @@ def test_cloudinary_upload(request):
             'default_storage_class': type(default_storage).__name__,
             'CLOUDINARY_STORAGE': str(getattr(django_settings, 'CLOUDINARY_STORAGE', {})),
             'storage_source_snippet': storage_source[:500] if storage_source else 'N/A',
+            'disk_source_snippet': disk_source[:500] if disk_source else 'N/A',
+            'pyc_info': pyc_info,
             'message': 'Image uploaded and URL resolves!' if url_works else 'Image uploaded but URL does NOT resolve',
         }
 
