@@ -67,18 +67,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'portfolio_project.wsgi.application'
 
-# Database — Neon PostgreSQL
-import dj_database_url
-
+# Database — PythonAnywhere MySQL
+# Create your MySQL DB at: Dashboard → Databases → Create a new database
 DATABASES = {
-    'default': dj_database_url.parse(
-        os.environ.get(
-            'DATABASE_URL',
-            'postgresql://neondb_owner:npg_FiUOhQyB1K0s@ep-wandering-union-aoszfenw-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require'
-        ),
-        conn_max_age=600,
-        conn_health_checks=True,
-    ),
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_NAME', 'YOUR_USERNAME$portfolio_db'),
+        'USER': os.environ.get('DB_USER', 'YOUR_USERNAME'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', 'YOUR_USERNAME.mysql.pythonanywhere-services.com'),
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+        },
+    }
 }
 
 # Password validation
