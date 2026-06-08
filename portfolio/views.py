@@ -189,18 +189,29 @@ def test_cloudinary_upload(request):
         except Exception as e:
             storage_source = 'Error reading: ' + str(e)
 
-        # Also read the actual file from disk
+        # Also read the actual .py file from disk (not .pyc)
         try:
-            import core.storage.custom_cloudinary as m
             import os
-            fpath = os.path.abspath(m.__file__)
-            if fpath.endswith('.pyc'):
-                pyc_info = fpath
-                fpath = fpath[:-4] + '.py' if fpath.endswith('.pyc') else fpath[:-1]
-            with open(fpath.replace('.pyc', '.py') if fpath.endswith('.pyc') else fpath.rsplit('.',1)[0] + '.py') as f:
-                disk_source = f.read()[:600]
+            # Find the .py source file by looking at the module's spec
+            import importlib.util
+            spec = importlib.util.find_spec('core.storage.custom_cloudinary')
+            if spec and spec.origin:
+                py_path = spec.origin
+                if py_path.endswith('.pyc'):
+                    # Convert /path/__pycache__/mod.cpython-314.pyc -> /path/mod.py
+                    py_path = os.path.join(
+                        os.path.dirname(os.path.dirname(py_path)),
+                        os.path.basename(py_path).split('.')[0] + '.py'
+                    )
+                with open(py_path) as f:
+                    disk_source = f.read()[:2000]
+                disk_path = py_path
+            else:
+                disk_source = 'Could not find spec for custom_cloudinary'
+                disk_path = 'N/A'
         except Exception as e:
             disk_source = 'Error: ' + str(e)
+            disk_path = 'N/A'
 
         # List pycache
         try:
@@ -229,6 +240,7 @@ def test_cloudinary_upload(request):
             'CLOUDINARY_STORAGE': str(getattr(django_settings, 'CLOUDINARY_STORAGE', {})),
             'storage_source_snippet': storage_source[:500] if storage_source else 'N/A',
             'disk_source_snippet': disk_source[:2000] if disk_source else 'N/A',
+            'disk_path': disk_path,
             'pyc_info': pyc_info,
             'message': 'Image uploaded and URL resolves!' if url_works else 'Image uploaded but URL does NOT resolve',
         }
