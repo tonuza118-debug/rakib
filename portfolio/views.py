@@ -178,6 +178,15 @@ def test_cloudinary_upload(request):
         if hasattr(django_settings, 'STORAGES'):
             stores_info['STORAGES'] = str(getattr(django_settings, 'STORAGES', {}))
 
+        # Read the actual storage source file to check which version is deployed
+        storage_source = ''
+        try:
+            import inspect
+            from core.storage import custom_cloudinary
+            storage_source = inspect.getsource(custom_cloudinary.CustomMediaCloudinaryStorage._upload)
+        except Exception as e:
+            storage_source = 'Error reading: ' + str(e)
+
         result = {
             'status': 'success',
             'project_id': project.id,
@@ -187,9 +196,8 @@ def test_cloudinary_upload(request):
             'url_status': url_status,
             'DEFAULT_FILE_STORAGE': str(getattr(django_settings, 'DEFAULT_FILE_STORAGE', 'NOT SET')),
             'default_storage_class': type(default_storage).__name__,
-            'default_storage_module': type(default_storage).__module__,
-            'stores_info': stores_info,
             'CLOUDINARY_STORAGE': str(getattr(django_settings, 'CLOUDINARY_STORAGE', {})),
+            'storage_source_snippet': storage_source[:500] if storage_source else 'N/A',
             'message': 'Image uploaded and URL resolves!' if url_works else 'Image uploaded but URL does NOT resolve',
         }
 
