@@ -8,8 +8,8 @@ class SiteSettings(models.Model):
     """Singleton model for site-wide settings."""
     site_title = models.CharField(max_length=200, default="My Portfolio")
     site_description = models.TextField(blank=True)
-    logo = models.ImageField(upload_to='site/', blank=True, null=True)
-    favicon = models.ImageField(upload_to='site/', blank=True, null=True)
+    logo = models.ImageField(upload_to='site/', blank=True, null=True, max_length=500)
+    favicon = models.ImageField(upload_to='site/', blank=True, null=True, max_length=500)
     hero_title = models.CharField(max_length=200, default="Hello, I'm")
     hero_name = models.CharField(max_length=100, default="[Your Name]")
     hero_roles = models.JSONField(default=list, blank=True,
