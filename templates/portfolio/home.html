@@ -783,6 +783,257 @@
         transform: translateY(0);
         display: block;
     }
+
+    /* ===== HOME PAGE MOBILE RESPONSIVE ===== */
+
+    /* ≤1024px tablet */
+    @media (max-width: 1024px) {
+        #hero {
+            min-height: 60vh !important;
+        }
+        #skills-galaxy {
+            height: 50px !important;
+        }
+    }
+
+    /* ≤768px mobile */
+    @media (max-width: 768px) {
+        /* Hero */
+        #hero {
+            min-height: 100vh !important;
+            padding: 80px 0 40px !important;
+        }
+        #hero .px-6 {
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+        }
+        #hero .section-title {
+            font-size: clamp(2rem, 10vw, 3rem);
+            margin-bottom: 1rem;
+        }
+        #hero .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        #hero .flex-col {
+            gap: 1rem;
+        }
+        #hero .magnetic-btn {
+            width: 100%;
+            max-width: 320px;
+        }
+
+        /* About */
+        #about .grid {
+            gap: 2rem;
+        }
+        #about .tilt-card {
+            max-width: 280px;
+            margin: 0 auto;
+        }
+        #about .grid.grid-cols-3 {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+        #about .grid.grid-cols-3 .glass {
+            padding: 0.75rem;
+        }
+        #about .grid.grid-cols-3 .text-3xl {
+            font-size: 1.5rem;
+        }
+        #about .grid.grid-cols-3 .text-xs {
+            font-size: 0.65rem;
+        }
+        #about .leading-relaxed {
+            font-size: 0.95rem;
+        }
+        /* Floating cards on avatar */
+        #about .animate-float {
+            display: none;
+        }
+
+        /* Skills Galaxy */
+        #skills .section-title {
+            margin-bottom: 1rem;
+        }
+        #skills-galaxy {
+            height: 40px !important;
+            transform: none !important;
+        }
+        #skills-galaxy .skill-planet {
+            width: 48px;
+            height: 48px;
+            margin-left: -24px;
+            margin-top: -24px;
+        }
+        #skills-galaxy .skill-planet span {
+            font-size: 0.6rem;
+        }
+        #skills .grid.md\\:grid-cols-2,
+        #skills .grid.lg\\:grid-cols-3 {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        #skills .mt-16 {
+            margin-top: 2rem;
+        }
+
+        /* Projects */
+        #projects .section-title {
+            margin-bottom: 1rem;
+        }
+        #projects .flex-wrap {
+            gap: 0.5rem;
+        }
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+        #projects-grid {
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+        .project-card .relative.h-56 {
+            height: 200px;
+        }
+        .project-card .p-6 {
+            padding: 1rem;
+        }
+        .project-card h3 {
+            font-size: 1.1rem;
+        }
+
+        /* Experience & Education */
+        #experience .grid {
+            gap: 2.5rem;
+        }
+        #experience .section-title {
+            margin-bottom: 1rem;
+        }
+        #experience .pl-12 {
+            padding-left: 2rem;
+        }
+        #experience .absolute.left-4 {
+            left: 0.5rem;
+        }
+        #experience .absolute.left-2\\.5 {
+            left: 0.25rem;
+        }
+        #experience .glass.rounded-xl.p-6 {
+            padding: 1rem;
+        }
+        #experience .flex.justify-between {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        #experience .whitespace-nowrap.ml-2 {
+            margin-left: 0;
+        }
+
+        /* Achievements */
+        #achievements .section-title {
+            margin-bottom: 1rem;
+        }
+        #achievements .grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .achievement-card .p-6 {
+            padding: 1.25rem;
+        }
+
+        /* Research / Publications */
+        #research .section-title {
+            margin-bottom: 1rem;
+        }
+        .publication-card .p-8 {
+            padding: 1.25rem;
+        }
+        .publication-card .flex-col {
+            gap: 1rem;
+        }
+        .publication-card .text-xl {
+            font-size: 1.1rem;
+        }
+        .publication-card .flex.items-center.gap-4.mt-4 {
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .publication-card .ml-auto {
+            margin-left: 0 !important;
+        }
+
+        /* Testimonials */
+        .testimonial-card {
+            width: 85vw !important;
+            padding: 1.25rem !important;
+        }
+        .testimonial-card .text-4xl {
+            font-size: 2rem;
+        }
+
+        /* Contact */
+        #contact .grid {
+            gap: 2rem;
+        }
+        #contact .section-title {
+            margin-bottom: 1rem;
+        }
+        #contact .p-8 {
+            padding: 1.25rem;
+        }
+        #contact .space-y-6 {
+            gap: 1rem;
+        }
+        #contact .space-y-4 {
+            gap: 0.75rem;
+        }
+        #contact .glass.rounded-xl.p-4 {
+            padding: 0.75rem;
+        }
+        #contact .magnetic-btn.w-full {
+            width: 100%;
+        }
+        #contact .font-mono.text-sm {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* ≤480px small mobile */
+    @media (max-width: 480px) {
+        #hero .section-title {
+            font-size: clamp(1.75rem, 12vw, 2.5rem);
+        }
+        #about .grid.grid-cols-3 .text-3xl {
+            font-size: 1.25rem;
+        }
+        .filter-btn {
+            padding: 4px 12px;
+            font-size: 0.7rem;
+        }
+        .project-card .relative.h-56 {
+            height: 160px;
+        }
+        .publication-card .flex.items-start.gap-6 {
+            flex-direction: column;
+        }
+        .publication-card .flex.items-center.gap-4.mt-4 {
+            gap: 0.5rem;
+        }
+        .publication-card .text-2xl {
+            font-size: 1.25rem;
+        }
+    }
+
+    /* Touch: disable galaxy drag, use touch scroll */
+    @media (hover: none) and (pointer: coarse) {
+        #skills-galaxy {
+            pointer-events: none;
+        }
+        .filter-btn {
+            min-height: 44px;
+            padding: 8px 16px;
+        }
+    }
 </style>
 {% endblock %}
 

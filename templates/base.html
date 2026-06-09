@@ -700,6 +700,18 @@
         }
 
         /* ===== RESPONSIVE ===== */
+
+        /* Tablet and below (≤1024px) */
+        @media (max-width: 1024px) {
+            .section {
+                padding: 100px 0;
+            }
+            .section-title {
+                font-size: clamp(2rem, 5vw, 3.5rem);
+            }
+        }
+
+        /* Mobile (≤768px) */
         @media (max-width: 768px) {
             body {
                 cursor: auto;
@@ -707,11 +719,170 @@
             .cursor-dot, .cursor-ring {
                 display: none;
             }
+
+            /* Navbar */
             .navbar {
-                padding: 15px 20px;
+                top: 8px;
+                width: calc(100% - 24px);
+                padding: 10px 16px;
+                border-radius: 16px;
             }
+            .navbar .max-w-7xl {
+                padding: 0;
+            }
+            .navbar .max-w-7xl > a span {
+                font-size: 1rem;
+            }
+            .navbar .max-w-7xl > a img {
+                width: 32px;
+                height: 32px;
+            }
+            .nav-link {
+                font-size: 15px;
+                padding: 10px 16px;
+            }
+            #mobile-menu {
+                padding: 8px 0;
+            }
+            #mobile-menu .nav-link {
+                display: block;
+                padding: 12px 16px;
+                border-radius: 8px;
+            }
+            #mobile-menu .nav-link:active {
+                background: rgba(255,255,255,0.05);
+            }
+
+            /* Sections */
             .section {
-                padding: 80px 0;
+                padding: 60px 0;
+                min-height: auto;
+            }
+            .section-title {
+                font-size: clamp(1.75rem, 7vw, 2.5rem);
+                margin-bottom: 1rem;
+            }
+            .section-subtitle {
+                font-size: 12px;
+                letter-spacing: 2px;
+            }
+
+            /* Grids → single column */
+            .grid.lg\\:grid-cols-2 {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .grid.lg\\:grid-cols-3 {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .grid.md\\:grid-cols-2 {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .grid.md\\:grid-cols-3 {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            /* Glass cards */
+            .glass, .glass-strong {
+                border-radius: 16px;
+            }
+
+            /* Music toggle */
+            .music-toggle {
+                bottom: 16px;
+                right: 16px;
+                width: 44px;
+                height: 44px;
+            }
+
+            /* Visitor counter */
+            .visitor-counter {
+                bottom: 16px;
+                left: 16px;
+                font-size: 10px;
+                padding: 6px 12px;
+            }
+
+            /* Footer */
+            footer {
+                padding: 2rem 1rem;
+            }
+            footer .max-w-7xl {
+                padding: 0 1rem;
+            }
+
+            /* Ambient blobs — reduce on mobile for performance */
+            .lg-ambient::before {
+                width: 300px;
+                height: 300px;
+                filter: blur(60px);
+            }
+            .lg-ambient::after {
+                width: 250px;
+                height: 250px;
+                filter: blur(50px);
+            }
+
+            /* Loading bar */
+            .loading-bar-container {
+                width: 200px;
+            }
+
+            /* Magnetic button full width on mobile */
+            .magnetic-btn {
+                padding: 14px 28px;
+                font-size: 14px;
+            }
+
+            /* Tilt cards — disable 3D tilt on touch */
+            .tilt-card {
+                transform: none !important;
+            }
+
+            /* Hide scanlines on mobile for perf */
+            .scanlines::after {
+                display: none;
+            }
+        }
+
+        /* Small mobile (≤480px) */
+        @media (max-width: 480px) {
+            .section {
+                padding: 48px 0;
+            }
+            .section-title {
+                font-size: clamp(1.5rem, 8vw, 2rem);
+            }
+            .navbar {
+                width: calc(100% - 16px);
+                padding: 8px 12px;
+            }
+            .magnetic-btn {
+                padding: 12px 24px;
+                font-size: 13px;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .tilt-card {
+                transform: none !important;
+            }
+            .glass-hover:hover {
+                transform: none;
+            }
+            .magnetic-btn {
+                cursor: pointer;
+            }
+            a, button {
+                cursor: pointer !important;
+            }
+            /* Larger touch targets */
+            .nav-link, .filter-btn, .magnetic-btn {
+                min-height: 44px;
             }
         }
 

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<section class="section relative pt-32">
+<section class="section relative pt-32" id="project-detail">
     <div class="max-w-5xl mx-auto px-6">
         <!-- Back button -->
         <a href="/#projects" class="inline-flex items-center gap-2 text-white/40 hover:text-neon-cyan transition-colors mb-8 font-mono text-sm" style="cursor: none;">
@@ -129,6 +129,71 @@
         {% endif %}
     </div>
 </section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media (max-width: 768px) {
+        #project-detail {
+            padding-top: 6rem !important;
+        }
+        #project-detail .max-w-5xl {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        #project-detail .section-title {
+            font-size: clamp(1.5rem, 8vw, 2rem);
+        }
+        #project-detail .flex.items-center.gap-3.mb-4 {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        #project-detail .flex.flex-wrap.gap-4.mb-12 {
+            gap: 0.75rem;
+        }
+        .grid.grid-cols-2.md\\:grid-cols-3 {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 0.5rem;
+        }
+        .grid.grid-cols-2.md\\:grid-cols-3 .h-40 {
+            height: 120px;
+        }
+        .grid.md\\:grid-cols-3.gap-6 {
+            grid-template-columns: 1fr !important;
+            gap: 0.75rem;
+        }
+        .grid.md\\:grid-cols-3 .h-32 {
+            height: 120px;
+        }
+    }
+    @media (max-width: 480px) {
+        #project-detail {
+            padding-top: 5rem !important;
+        }
+        .grid.grid-cols-2.md\\:grid-cols-3 {
+            grid-template-columns: 1fr !important;
+        }
+        .grid.grid-cols-2.md\\:grid-cols-3 .h-40 {
+            height: 180px;
+        }
+        #project-detail .flex.flex-wrap.gap-4.mb-12 {
+            flex-direction: column;
+        }
+        #project-detail .magnetic-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    @media (hover: none) and (pointer: coarse) {
+        .tilt-card {
+            transform: none !important;
+        }
+        #gallery-lightbox img {
+            max-width: 95vw !important;
+            max-height: 85vh !important;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block extra_js %}
