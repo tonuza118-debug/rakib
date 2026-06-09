@@ -40,6 +40,12 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
 
         response = cloudinary.uploader.upload(content, **options)
 
+        # DEBUG: Log what we're sending and receiving
+        import sys
+        print(f'[CUSTOM_STORAGE] public_id sent: {public_id}', file=sys.stderr)
+        print(f'[CUSTOM_STORAGE] response public_id: {response.get("public_id")}', file=sys.stderr)
+        print(f'[CUSTOM_STORAGE] options: {options}', file=sys.stderr)
+
         # Return the FULL raw response so _save can use the actual public_id
         return response
 
