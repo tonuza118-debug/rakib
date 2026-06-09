@@ -87,6 +87,7 @@ def version_check(request):
     test_result = 'not tested'
     test_url = None
     test_stored = None
+    cloudinary_response = None
     try:
         sig = b'\x89PNG\r\n\x1a\n'
         ihdr_data = struct.pack('>IIBBBBB', 4, 4, 8, 2, 0, 0, 0)
@@ -117,6 +118,12 @@ def version_check(request):
             order=9999,
             image=png,
         )
+        # Also capture what _save returns directly
+        from core.storage.custom_cloudinary import CustomMediaCloudinaryStorage
+        storage = CustomMediaCloudinaryStorage()
+        saved_name = storage.save('projects/test_cloudinary_direct.png', png)
+        cloudinary_response = {'saved_name': saved_name}
+
         project.refresh_from_db()
         test_stored = str(project.image.name) if project.image else None
         test_url = project.image.url if project.image else None
@@ -144,6 +151,7 @@ def version_check(request):
         'test_stored_value': test_stored,
         'test_url': test_url,
         'test_result': test_result,
+        'cloudinary_response': cloudinary_response,
     })
 
 
