@@ -42,3 +42,5 @@ cache/
 # Documents
 *.docx
 *.pdf
+staticfiles/
+build.sh
