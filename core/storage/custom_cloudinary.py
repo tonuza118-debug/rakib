@@ -3,6 +3,7 @@ import os
 import cloudinary
 import cloudinary.uploader
 from cloudinary_storage.storage import MediaCloudinaryStorage
+from django.conf import settings
 
 
 class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
@@ -13,7 +14,7 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
     This custom storage converts them to: projects_gallery_filename
 
     The key fix: the actual public_id returned by Cloudinary's upload response is stored
-    in the database, and the url() method builds the correct Cloudinary URL from it.
+    in the database, and the url() method returns the raw (untransformed) Cloudinary URL.
     """
 
     def _upload(self, name, content):
@@ -58,10 +59,9 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
         return actual_public_id
 
     def url(self, name):
-        """Generate Cloudinary URL from stored public_id.
+        """Return the raw (untransformed) Cloudinary image URL.
 
-        The stored value is the exact public_id returned by Cloudinary during upload.
-        We only handle legacy data (full URLs or slash-separated paths).
+        No transformations — just the original image as uploaded.
         """
         if not name:
             return ''
@@ -80,7 +80,8 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
         if '.' in public_id:
             public_id = public_id.rsplit('.', 1)[0]
 
-        return cloudinary.CloudinaryImage(public_id).build_url()
+        cloud_name = getattr(settings, 'CLOUDINARY_CLOUD_NAME', '')
+        return f'https://res.cloudinary.com/{cloud_name}/image/upload/{public_id}'
 
     def get_valid_name(self, name):
         """Return the name suitable for storage (underscored, no slashes)."""
