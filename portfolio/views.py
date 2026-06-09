@@ -80,14 +80,11 @@ def version_check(request):
 
     src = inspect.getsource(custom_cloudinary.CustomMediaCloudinaryStorage._upload)
     has_use_filename = 'use_filename' in src
-    # Check the docstring to verify which version is loaded
     doc = custom_cloudinary.CustomMediaCloudinaryStorage._upload.__doc__ or ''
 
-    # Actually test an upload
-    test_result = 'not tested'
-    test_url = None
-    test_stored = None
-    cloudinary_response = None
+    # Test 1: Direct cloudinary upload (bypass Django storage)
+    direct_result = 'not tested'
+    direct_pid = None
     try:
         sig = b'\x89PNG\r\n\x1a\n'
         ihdr_data = struct.pack('>IIBBBBB', 4, 4, 8, 2, 0, 0, 0)
@@ -101,57 +98,83 @@ def version_check(request):
         iend = struct.pack('>I', 0) + b'IEND' + struct.pack('>I', iend_crc)
         png_data = sig + ihdr + idat + iend
 
+        import cloudinary
+        result = cloudinary.uploader.upload(
+            png_data,
+            public_id='test_direct_v3',
+            use_filename=False,
+            unique_filename=False,
+            overwrite=True,
+        )
+        direct_pid = result['public_id']
+        direct_result = 'OK' if direct_pid == 'test_direct_v3' else f'MISMATCH: got {direct_pid}'
+        # Cleanup
+        cloudinary.uploader.destroy('test_direct_v3')
+    except Exception as e:
+        direct_result = 'ERROR: ' + str(e)[:200]
+
+    # Test 2: Via Django storage.save()
+    storage_result = 'not tested'
+    storage_saved = None
+    try:
         buf = io.BytesIO(png_data)
         from django.core.files.uploadedfile import InMemoryUploadedFile
-        png = InMemoryUploadedFile(buf, 'image', 'test_verify.png', 'image/png', len(png_data), None)
+        png = InMemoryUploadedFile(buf, 'image', 'test_storage.png', 'image/png', len(png_data), None)
+        from core.storage.custom_cloudinary import CustomMediaCloudinaryStorage
+        storage = CustomMediaCloudinaryStorage()
+        storage_saved = storage.save('projects/test_storage_v3.png', png)
+        storage_result = 'OK' if storage_saved == 'projects_test_storage_v3' else f'MISMATCH: got {storage_saved}'
+    except Exception as e:
+        storage_result = 'ERROR: ' + str(e)[:200]
 
-        # Clean up old test projects
-        Project.objects.filter(slug__startswith='cloudinary-verify-').delete()
-
+    # Test 3: Via Django ORM
+    orm_result = 'not tested'
+    orm_stored = None
+    orm_url = None
+    try:
+        Project.objects.filter(slug__startswith='test-v3-').delete()
+        buf2 = io.BytesIO(png_data)
+        png2 = InMemoryUploadedFile(buf2, 'image', 'test_orm.png', 'image/png', len(png_data), None)
+        ts = int(time.time())
         project = Project.objects.create(
-            title='Cloudinary Verify ' + str(int(time.time())),
-            slug='cloudinary-verify-' + str(int(time.time())),
-            description='Verification upload',
-            short_description='Verify',
+            title=f'Test V3 {ts}',
+            slug=f'test-v3-{ts}',
+            description='Test',
+            short_description='Test',
             status='completed',
             featured=False,
             order=9999,
-            image=png,
+            image=png2,
         )
-        # Also capture what _save returns directly
-        from core.storage.custom_cloudinary import CustomMediaCloudinaryStorage
-        storage = CustomMediaCloudinaryStorage()
-        saved_name = storage.save('projects/test_cloudinary_direct.png', png)
-        cloudinary_response = {'saved_name': saved_name}
-
         project.refresh_from_db()
-        test_stored = str(project.image.name) if project.image else None
-        test_url = project.image.url if project.image else None
+        orm_stored = str(project.image.name) if project.image else None
+        orm_url = project.image.url if project.image else None
+
+        if orm_stored and '/' not in orm_stored and '.' not in orm_stored:
+            orm_result = 'OK - no slashes or extensions!'
+        else:
+            orm_result = f'PROBLEM: stored={orm_stored}'
 
         # Check URL
-        import urllib.request
-        url_ok = False
-        if test_url:
+        if orm_url:
+            import urllib.request
             try:
-                req = urllib.request.Request(test_url, method='HEAD')
+                req = urllib.request.Request(orm_url, method='HEAD')
                 resp = urllib.request.urlopen(req, timeout=10)
-                url_ok = resp.status == 200
+                orm_result += f' URL=HTTP {resp.status}'
             except Exception as e:
-                test_result = str(e)[:100]
+                orm_result += f' URL error: {str(e)[:80]}'
 
-        test_result = 'SUCCESS - URL resolves!' if url_ok else 'FAIL - URL does not resolve'
         project.delete()
     except Exception as e:
-        test_result = 'ERROR: ' + str(e)[:200]
+        orm_result = 'ERROR: ' + str(e)[:200]
 
     return JsonResponse({
         'has_use_filename': has_use_filename,
         'upload_docstring': doc[:100],
-        'storage_class': type(custom_cloudinary.CustomMediaCloudinaryStorage).__name__,
-        'test_stored_value': test_stored,
-        'test_url': test_url,
-        'test_result': test_result,
-        'cloudinary_response': cloudinary_response,
+        'direct_upload': {'result': direct_result, 'public_id': direct_pid},
+        'storage_save': {'result': storage_result, 'saved_name': storage_saved},
+        'orm_upload': {'result': orm_result, 'stored': orm_stored, 'url': orm_url},
     })
 
 
