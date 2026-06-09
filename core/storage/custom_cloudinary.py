@@ -17,7 +17,7 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
     """
 
     def _upload(self, name, content):
-        """Upload file to Cloudinary with underscored public_id. V3"""
+        """Upload file to Cloudinary with underscored public_id."""
         # Build a clean public_id from the file path:
         # e.g. "projects/gallery/my_photo.jpg" -> "projects_gallery_my_photo"
         public_id = name.replace('/', '_')
@@ -40,13 +40,6 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
 
         response = cloudinary.uploader.upload(content, **options)
 
-        # DEBUG: Log what we're sending and receiving
-        import sys
-        print(f'[CUSTOM_STORAGE] public_id sent: {public_id}', file=sys.stderr)
-        print(f'[CUSTOM_STORAGE] response public_id: {response.get("public_id")}', file=sys.stderr)
-        print(f'[CUSTOM_STORAGE] options: {options}', file=sys.stderr)
-
-        # Return the FULL raw response so _save can use the actual public_id
         return response
 
     def _save(self, name, content):
@@ -67,25 +60,25 @@ class CustomMediaCloudinaryStorage(MediaCloudinaryStorage):
     def url(self, name):
         """Generate Cloudinary URL from stored public_id.
 
-        The 'name' parameter is the value stored in the database,
-        which is the public_id returned by _save().
-        Cloudinary serves images by public_id (no extension in the URL).
+        The stored value is the exact public_id returned by Cloudinary during upload.
+        We only handle legacy data (full URLs or slash-separated paths).
         """
+        if not name:
+            return ''
+
+        # Already a full URL — return directly
+        if isinstance(name, str) and name.startswith('http'):
+            return name
+
         public_id = name
 
-        # Handle old data: convert slashes to underscores, strip file extension
+        # Legacy data: convert slashes to underscores
         if '/' in public_id:
             public_id = public_id.replace('/', '_')
 
-        # Strip file extension if present (e.g. ".jpg", ".png", ".webp")
-        # Cloudinary public_ids never include the file extension.
+        # Legacy data: remove file extension if present
         if '.' in public_id:
             public_id = public_id.rsplit('.', 1)[0]
-
-        # Normalize: collapse multiple underscores, strip leading/trailing
-        while '__' in public_id:
-            public_id = public_id.replace('__', '_')
-        public_id = public_id.strip('_')
 
         return cloudinary.CloudinaryImage(public_id).build_url()
 
