@@ -123,6 +123,17 @@ else:
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     MEDIA_URL = '/media/'
 
+# STORAGES is the Django 5.x way to configure file backends (takes precedence over DEFAULT_FILE_STORAGE).
+# Without this, Django 5.2 uses its default STORAGES dict which has FileSystemStorage for 'default'.
+STORAGES = {
+    'default': {
+        'BACKEND': DEFAULT_FILE_STORAGE,
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+
 # CLOUDINARY_STORAGE must always be defined (django-cloudinary-storage reads it at import time).
 # When local storage is used, the values don't matter but the keys must exist.
 CLOUDINARY_STORAGE = {
