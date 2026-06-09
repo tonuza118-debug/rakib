@@ -108,7 +108,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise for static file serving (collectstatic copies admin/css/js here)
-# Note: STATICFILES_STORAGE is set via STORAGES dict below for Django 5.x compatibility
+STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 
 # Media files (local fallback — for dev without Cloudinary creds)
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -130,7 +130,7 @@ STORAGES = {
         'BACKEND': DEFAULT_FILE_STORAGE,
     },
     'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        'BACKEND': 'whitenoise.storage.StaticFilesStorage',
     },
 }
 
