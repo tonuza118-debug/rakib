@@ -133,9 +133,12 @@
 
 {% block extra_css %}
 <style>
+    /* ===== PROJECT DETAIL MOBILE ===== */
+
     @media (max-width: 768px) {
         #project-detail {
             padding-top: 6rem !important;
+            padding-bottom: 2rem;
         }
         #project-detail .max-w-5xl {
             padding-left: 1rem;
@@ -143,6 +146,7 @@
         }
         #project-detail .section-title {
             font-size: clamp(1.5rem, 8vw, 2rem);
+            line-height: 1.2;
         }
         #project-detail .flex.items-center.gap-3.mb-4 {
             flex-wrap: wrap;
@@ -151,26 +155,75 @@
         #project-detail .flex.flex-wrap.gap-4.mb-12 {
             gap: 0.75rem;
         }
-        .grid.grid-cols-2.md\\:grid-cols-3 {
+        /* Back button — larger touch target */
+        #project-detail a.inline-flex.items-center.gap-2 {
+            min-height: 44px;
+            padding: 8px 0;
+            display: inline-flex;
+            align-items: center;
+        }
+        /* Project image */
+        #project-detail .glass.rounded-2xl.overflow-hidden.mb-12 img {
+            border-radius: 14px;
+        }
+        /* Gallery grid */
+        .grid.grid-cols-2.md\\:grid-cols-3.gap-4 {
             grid-template-columns: 1fr 1fr !important;
             gap: 0.5rem;
         }
         .grid.grid-cols-2.md\\:grid-cols-3 .h-40 {
             height: 120px;
         }
+        .grid.grid-cols-2.md\\:grid-cols-3 .rounded-xl {
+            border-radius: 10px;
+        }
+        /* Video */
+        #project-detail .aspect-video {
+            border-radius: 14px;
+        }
+        /* Technologies */
+        #project-detail .flex.flex-wrap.gap-3 {
+            gap: 0.5rem;
+        }
+        #project-detail .flex.flex-wrap.gap-3 .glass {
+            padding: 8px 14px;
+            font-size: 0.85rem;
+        }
+        /* Action buttons */
+        #project-detail .flex.flex-wrap.gap-4.mb-12 {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        #project-detail .magnetic-btn {
+            width: 100%;
+            justify-content: center;
+            min-height: 52px;
+        }
+        /* Related projects */
         .grid.md\\:grid-cols-3.gap-6 {
             grid-template-columns: 1fr !important;
             gap: 0.75rem;
         }
         .grid.md\\:grid-cols-3 .h-32 {
-            height: 120px;
+            height: 140px;
+        }
+        .grid.md\\:grid-cols-3 .rounded-xl {
+            border-radius: 12px;
+        }
+        /* Related project links — larger touch targets */
+        .grid.md\\:grid-cols-3 a {
+            min-height: 44px;
         }
     }
+
     @media (max-width: 480px) {
         #project-detail {
             padding-top: 5rem !important;
         }
-        .grid.grid-cols-2.md\\:grid-cols-3 {
+        #project-detail .section-title {
+            font-size: clamp(1.25rem, 9vw, 1.75rem);
+        }
+        .grid.grid-cols-2.md\\:grid-cols-3.gap-4 {
             grid-template-columns: 1fr !important;
         }
         .grid.grid-cols-2.md\\:grid-cols-3 .h-40 {
@@ -184,13 +237,14 @@
             justify-content: center;
         }
     }
+
     @media (hover: none) and (pointer: coarse) {
         .tilt-card {
             transform: none !important;
         }
         #gallery-lightbox img {
             max-width: 95vw !important;
-            max-height: 85vh !important;
+            max-height: 85dvh !important;
         }
     }
 </style>
@@ -198,13 +252,19 @@
 
 {% block extra_js %}
 <script>
-    // ===== LIGHTBOX FOR PROJECT GALLERY =====
+    // ===== LIGHTBOX FOR PROJECT GALLERY (touch-friendly) =====
     function openLightbox(src) {
         const overlay = document.createElement('div');
         overlay.id = 'gallery-lightbox';
-        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);';
-        overlay.innerHTML = `<img src="${src}" style="max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain;box-shadow:0 0 60px rgba(59,130,246,0.2);"><button style="position:absolute;top:24px;right:24px;background:rgba(255,255,255,0.1);border:none;color:white;font-size:28px;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:sans-serif;" onclick="closeLightbox()">×</button>`;
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);-webkit-overflow-scrolling:touch;';
+        overlay.innerHTML = `<img src="${src}" style="max-width:90vw;max-height:90dvh;border-radius:12px;object-fit:contain;box-shadow:0 0 60px rgba(59,130,246,0.2);"><button style="position:absolute;top:max(16px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));background:rgba(255,255,255,0.1);border:none;color:white;font-size:28px;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:sans-serif;-webkit-tap-highlight-color:transparent;" onclick="event.stopPropagation();closeLightbox()">×</button>`;
         overlay.onclick = function(e) { if (e.target === overlay) closeLightbox(); };
+        // Swipe-down to close on mobile
+        let touchStartY = 0;
+        overlay.addEventListener('touchstart', function(e) { touchStartY = e.touches[0].clientY; }, { passive: true });
+        overlay.addEventListener('touchend', function(e) {
+            if (e.changedTouches[0].clientY - touchStartY > 80) closeLightbox();
+        }, { passive: true });
         document.body.appendChild(overlay);
         document.body.style.overflow = 'hidden';
     }

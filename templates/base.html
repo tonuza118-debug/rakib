@@ -136,6 +136,7 @@
 
         html {
             scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
@@ -144,6 +145,19 @@
             color: #e2e8f0;
             overflow-x: hidden;
             cursor: none;
+            overscroll-behavior-y: contain;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Prevent horizontal overflow globally */
+        img, video, canvas, iframe {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Touch-action optimization for interactive elements */
+        a, button, [role="button"], input, textarea, select {
+            touch-action: manipulation;
         }
 
         /* Custom cursor — GPU-accelerated */
@@ -717,7 +731,7 @@
                 cursor: auto;
             }
             .cursor-dot, .cursor-ring {
-                display: none;
+                display: none !important;
             }
 
             /* Navbar */
@@ -727,8 +741,14 @@
                 padding: 10px 16px;
                 border-radius: 16px;
             }
+            .navbar.scrolled {
+                padding: 8px 16px;
+            }
             .navbar .max-w-7xl {
                 padding: 0;
+            }
+            .navbar .max-w-7xl > a {
+                min-height: 44px;
             }
             .navbar .max-w-7xl > a span {
                 font-size: 1rem;
@@ -737,20 +757,43 @@
                 width: 32px;
                 height: 32px;
             }
+
+            /* Mobile menu button — 44x44 touch target */
+            #mobile-menu-btn {
+                min-width: 44px;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: -8px -8px -8px 0;
+                border-radius: 10px;
+                color: rgba(255,255,255,0.8);
+            }
+            #mobile-menu-btn:active {
+                background: rgba(255,255,255,0.08);
+            }
+
             .nav-link {
-                font-size: 15px;
-                padding: 10px 16px;
+                font-size: 16px;
+                padding: 14px 16px;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
             }
             #mobile-menu {
                 padding: 8px 0;
+                max-height: calc(100dvh - 100px);
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
             }
             #mobile-menu .nav-link {
-                display: block;
-                padding: 12px 16px;
-                border-radius: 8px;
+                display: flex;
+                padding: 14px 16px;
+                border-radius: 10px;
+                margin: 2px 0;
             }
             #mobile-menu .nav-link:active {
-                background: rgba(255,255,255,0.05);
+                background: rgba(255,255,255,0.08);
             }
 
             /* Sections */
@@ -794,8 +837,8 @@
             .music-toggle {
                 bottom: 16px;
                 right: 16px;
-                width: 44px;
-                height: 44px;
+                width: 48px;
+                height: 48px;
             }
 
             /* Visitor counter */
@@ -809,6 +852,7 @@
             /* Footer */
             footer {
                 padding: 2rem 1rem;
+                padding-bottom: max(2rem, env(safe-area-inset-bottom));
             }
             footer .max-w-7xl {
                 padding: 0 1rem;
@@ -831,10 +875,10 @@
                 width: 200px;
             }
 
-            /* Magnetic button full width on mobile */
+            /* Magnetic button */
             .magnetic-btn {
                 padding: 14px 28px;
-                font-size: 14px;
+                font-size: 15px;
             }
 
             /* Tilt cards — disable 3D tilt on touch */
@@ -857,12 +901,13 @@
                 font-size: clamp(1.5rem, 8vw, 2rem);
             }
             .navbar {
+                top: 6px;
                 width: calc(100% - 16px);
                 padding: 8px 12px;
             }
             .magnetic-btn {
                 padding: 12px 24px;
-                font-size: 13px;
+                font-size: 14px;
             }
         }
 
@@ -883,6 +928,37 @@
             /* Larger touch targets */
             .nav-link, .filter-btn, .magnetic-btn {
                 min-height: 44px;
+            }
+        }
+
+        /* ===== REDUCED MOTION ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .tilt-card, .glass-hover, .magnetic-btn {
+                transform: none !important;
+            }
+        }
+
+        /* ===== SAFE AREA (notched devices) ===== */
+        @supports (padding: env(safe-area-inset-top)) {
+            .navbar {
+                top: max(16px, env(safe-area-inset-top));
+            }
+            footer {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+            .music-toggle {
+                bottom: max(16px, env(safe-area-inset-bottom));
+                right: max(16px, env(safe-area-inset-right));
+            }
+            .visitor-counter {
+                bottom: max(16px, env(safe-area-inset-bottom));
+                left: max(16px, env(safe-area-inset-left));
             }
         }
 
@@ -1024,15 +1100,15 @@
             </button>
         </div>
         <!-- Mobile Menu -->
-        <div class="md:hidden hidden mt-4 pb-4" id="mobile-menu">
-            <div class="flex flex-col gap-2">
-                <a href="#about" class="nav-link">About</a>
-                <a href="#skills" class="nav-link">Skills</a>
-                <a href="#projects" class="nav-link">Projects</a>
-                <a href="#experience" class="nav-link">Experience</a>
-                <a href="#achievements" class="nav-link">Achievements</a>
-                <a href="#research" class="nav-link">Research</a>
-                <a href="#contact" class="nav-link">Contact</a>
+        <div class="md:hidden hidden mt-3 pb-2" id="mobile-menu">
+            <div class="flex flex-col gap-1">
+                <a href="#about" class="nav-link" data-mobile-nav>About</a>
+                <a href="#skills" class="nav-link" data-mobile-nav>Skills</a>
+                <a href="#projects" class="nav-link" data-mobile-nav>Projects</a>
+                <a href="#experience" class="nav-link" data-mobile-nav>Experience</a>
+                <a href="#achievements" class="nav-link" data-mobile-nav>Achievements</a>
+                <a href="#research" class="nav-link" data-mobile-nav>Research</a>
+                <a href="#contact" class="nav-link" data-mobile-nav>Contact</a>
             </div>
         </div>
     </nav>
@@ -1295,7 +1371,39 @@
             const mobileMenu = document.getElementById('mobile-menu');
             if (mobileBtn && mobileMenu) {
                 mobileBtn.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
+                    const isHidden = mobileMenu.classList.toggle('hidden');
+                    if (!isHidden) {
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        document.body.style.overflow = '';
+                    }
+                });
+
+                // Close menu on link click
+                mobileMenu.querySelectorAll('[data-mobile-nav]').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                        document.body.style.overflow = '';
+                    });
+                });
+
+                // Close menu on outside click
+                document.addEventListener('click', (e) => {
+                    if (!mobileMenu.classList.contains('hidden') &&
+                        !mobileMenu.contains(e.target) &&
+                        !mobileBtn.contains(e.target)) {
+                        mobileMenu.classList.add('hidden');
+                        document.body.style.overflow = '';
+                    }
+                });
+
+                // Close menu on Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        document.body.style.overflow = '';
+                        mobileBtn.focus();
+                    }
                 });
             }
 

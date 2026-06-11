@@ -6,7 +6,7 @@
 <!-- ============================================ -->
 <!-- HERO SECTION -->
 <!-- ============================================ -->
-<section id="hero" class="section flex items-center justify-center relative overflow-hidden" style="min-height: 50vh; padding: 0;">
+<section id="hero" class="section flex items-center justify-center relative overflow-hidden" style="min-height: 50dvh; padding: 0;">
     <!-- Hero Background Gradient -->
     <div class="absolute inset-0 bg-gradient-to-br from-deep-black via-[#0f172a] to-[#111827] opacity-90"></div>
     <!-- Radial glow (reduced blur for performance) -->
@@ -231,7 +231,7 @@
         </div>
 
         <!-- Category Filter -->
-        <div class="flex flex-wrap justify-center gap-3 mb-12" data-animate data-delay="0.1">
+        <div class="filter-scroll-container mb-12" data-animate data-delay="0.1">
             <button class="filter-btn active glass px-5 py-2 rounded-full text-sm font-medium text-neon-cyan border-neon-cyan/30 transition-all hover:bg-neon-cyan/10" data-filter="all">
                 All Projects
             </button>
@@ -784,12 +784,20 @@
         display: block;
     }
 
+    /* ===== FILTER SCROLL CONTAINER (mobile) ===== */
+    .filter-scroll-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
     /* ===== HOME PAGE MOBILE RESPONSIVE ===== */
 
     /* ≤1024px tablet */
     @media (max-width: 1024px) {
         #hero {
-            min-height: 60vh !important;
+            min-height: 60dvh !important;
         }
         #skills-galaxy {
             height: 50px !important;
@@ -798,66 +806,99 @@
 
     /* ≤768px mobile */
     @media (max-width: 768px) {
-        /* Hero */
+        /* Hero — use dvh for mobile browser chrome */
         #hero {
-            min-height: 100vh !important;
-            padding: 80px 0 40px !important;
+            min-height: 100dvh !important;
+            padding: 100px 0 48px !important;
+            display: flex;
+            align-items: center;
         }
         #hero .px-6 {
             padding-left: 1.25rem;
             padding-right: 1.25rem;
+            width: 100%;
         }
         #hero .section-title {
-            font-size: clamp(2rem, 10vw, 3rem);
-            margin-bottom: 1rem;
+            font-size: clamp(2.25rem, 11vw, 3.5rem);
+            margin-bottom: 1.5rem;
+            line-height: 1.05;
+            word-break: break-word;
+            -webkit-hyphens: auto;
+            hyphens: auto;
         }
         #hero .mb-6 {
             margin-bottom: 1.5rem;
         }
-        #hero .flex-col {
-            gap: 1rem;
+        #hero .flex-col a {
+            width: 100%;
+            max-width: 340px;
         }
         #hero .magnetic-btn {
             width: 100%;
-            max-width: 320px;
+            max-width: 340px;
+            min-height: 52px;
+            justify-content: center;
+        }
+        /* Hero radial glows — reduce on mobile */
+        #hero .blur-\[60px\] {
+            filter: blur(40px) !important;
+            width: 250px !important;
+            height: 250px !important;
+        }
+        #hero .blur-\[50px\] {
+            filter: blur(30px) !important;
+            width: 150px !important;
+            height: 150px !important;
         }
 
         /* About */
-        #about .grid {
+        #about .grid.lg\\:grid-cols-2 {
             gap: 2rem;
         }
         #about .tilt-card {
-            max-width: 280px;
+            max-width: 260px;
             margin: 0 auto;
         }
         #about .grid.grid-cols-3 {
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
         #about .grid.grid-cols-3 .glass {
-            padding: 0.75rem;
+            padding: 0.75rem 0.5rem;
+            border-radius: 12px;
         }
         #about .grid.grid-cols-3 .text-3xl {
             font-size: 1.5rem;
         }
         #about .grid.grid-cols-3 .text-xs {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
+            letter-spacing: 0.5px;
         }
         #about .leading-relaxed {
-            font-size: 0.95rem;
+            font-size: 1rem;
+            line-height: 1.7;
         }
-        /* Floating cards on avatar */
+        /* Floating cards on avatar — hide on mobile for cleaner look */
         #about .animate-float {
             display: none;
         }
+        /* Interests */
+        #about .flex.flex-wrap.gap-2 {
+            gap: 0.5rem;
+        }
+        #about .flex.flex-wrap.gap-2 .glass {
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+        }
 
-        /* Skills Galaxy */
+        /* Skills Galaxy — replace with scrollable grid on mobile */
         #skills .section-title {
             margin-bottom: 1rem;
         }
         #skills-galaxy {
             height: 40px !important;
             transform: none !important;
+            pointer-events: none;
         }
         #skills-galaxy .skill-planet {
             width: 48px;
@@ -876,17 +917,36 @@
         #skills .mt-16 {
             margin-top: 2rem;
         }
-
-        /* Projects */
-        #projects .section-title {
-            margin-bottom: 1rem;
+        /* Skill cards — larger touch targets */
+        #skills .glass.rounded-2xl.p-6 {
+            padding: 1rem;
+            border-radius: 14px;
         }
-        #projects .flex-wrap {
+        #skills .space-y-3 .group {
+            padding: 4px 0;
+        }
+
+        /* Projects — filter buttons scroll horizontally */
+        .filter-scroll-container {
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x proximity;
+            padding: 0 1rem 0.5rem;
+            margin: 0 -1rem 1.5rem;
             gap: 0.5rem;
         }
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
+        .filter-scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+        .filter-scroll-container .filter-btn {
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            min-height: 44px;
+            padding: 10px 18px;
+            font-size: 0.85rem;
+            white-space: nowrap;
         }
         #projects-grid {
             grid-template-columns: 1fr;
@@ -901,16 +961,24 @@
         .project-card h3 {
             font-size: 1.1rem;
         }
+        /* Project card links — larger touch targets */
+        .project-card .flex.items-center.gap-4 a,
+        .project-card .flex.items-center.gap-4 .ml-auto {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 4px 0;
+        }
 
         /* Experience & Education */
-        #experience .grid {
+        #experience .grid.lg\\:grid-cols-2 {
             gap: 2.5rem;
         }
         #experience .section-title {
             margin-bottom: 1rem;
         }
         #experience .pl-12 {
-            padding-left: 2rem;
+            padding-left: 2.25rem;
         }
         #experience .absolute.left-4 {
             left: 0.5rem;
@@ -920,6 +988,7 @@
         }
         #experience .glass.rounded-xl.p-6 {
             padding: 1rem;
+            border-radius: 14px;
         }
         #experience .flex.justify-between {
             flex-direction: column;
@@ -927,6 +996,16 @@
         }
         #experience .whitespace-nowrap.ml-2 {
             margin-left: 0;
+            font-size: 0.7rem;
+        }
+        #experience h4.text-lg {
+            font-size: 1rem;
+        }
+        #experience .text-sm {
+            font-size: 0.85rem;
+        }
+        #experience .space-y-8 {
+            gap: 1.5rem;
         }
 
         /* Achievements */
@@ -939,6 +1018,7 @@
         }
         .achievement-card .p-6 {
             padding: 1.25rem;
+            border-radius: 14px;
         }
 
         /* Research / Publications */
@@ -947,68 +1027,119 @@
         }
         .publication-card .p-8 {
             padding: 1.25rem;
+            border-radius: 14px;
         }
         .publication-card .flex-col {
             gap: 1rem;
         }
         .publication-card .text-xl {
             font-size: 1.1rem;
+            line-height: 1.4;
         }
         .publication-card .flex.items-center.gap-4.mt-4 {
             flex-wrap: wrap;
-            gap: 0.75rem;
+            gap: 0.5rem 1rem;
+        }
+        .publication-card .flex.items-center.gap-4.mt-4 a {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 4px 0;
         }
         .publication-card .ml-auto {
             margin-left: 0 !important;
         }
+        /* Citation badge */
+        .publication-card .text-2xl {
+            font-size: 1.5rem;
+        }
 
         /* Testimonials */
+        #testimonial-carousel {
+            margin: 0 -1rem;
+            padding: 0 1rem 0.5rem;
+        }
         .testimonial-card {
-            width: 85vw !important;
+            width: 80vw !important;
+            min-width: 260px;
             padding: 1.25rem !important;
+            border-radius: 14px;
         }
         .testimonial-card .text-4xl {
             font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .testimonial-card p {
+            font-size: 0.95rem;
         }
 
         /* Contact */
-        #contact .grid {
+        #contact .grid.lg\\:grid-cols-2 {
             gap: 2rem;
         }
         #contact .section-title {
             margin-bottom: 1rem;
         }
-        #contact .p-8 {
+        #contact form.p-8 {
             padding: 1.25rem;
+            border-radius: 14px;
         }
         #contact .space-y-6 {
             gap: 1rem;
         }
+        /* Form inputs — larger touch targets */
+        #contact .glass-input {
+            min-height: 48px;
+            font-size: 16px !important; /* Prevents iOS zoom */
+            padding: 12px 16px;
+        }
+        #contact textarea.glass-input {
+            min-height: 120px;
+        }
+        #contact .font-mono.text-sm {
+            font-size: 0.85rem;
+        }
+        #contact .magnetic-btn.w-full {
+            width: 100%;
+            min-height: 52px;
+        }
+        /* Contact info cards */
         #contact .space-y-4 {
             gap: 0.75rem;
         }
         #contact .glass.rounded-xl.p-4 {
-            padding: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
         }
-        #contact .magnetic-btn.w-full {
+        #contact .glass.rounded-xl.p-4 a {
             width: 100%;
         }
-        #contact .font-mono.text-sm {
-            font-size: 0.8rem;
+        /* Quick commands box */
+        #contact .glass.rounded-2xl.p-6 {
+            padding: 1rem;
+            border-radius: 14px;
+        }
+        #contact .glass.rounded-2xl.p-4 {
+            padding: 1rem;
         }
     }
 
     /* ≤480px small mobile */
     @media (max-width: 480px) {
+        #hero {
+            padding: 90px 0 40px !important;
+        }
         #hero .section-title {
             font-size: clamp(1.75rem, 12vw, 2.5rem);
         }
         #about .grid.grid-cols-3 .text-3xl {
             font-size: 1.25rem;
         }
-        .filter-btn {
-            padding: 4px 12px;
-            font-size: 0.7rem;
+        #about .grid.grid-cols-3 .text-xs {
+            font-size: 0.55rem;
         }
         .project-card .relative.h-56 {
             height: 160px;
@@ -1022,6 +1153,19 @@
         .publication-card .text-2xl {
             font-size: 1.25rem;
         }
+        .testimonial-card {
+            width: 85vw !important;
+            min-width: 240px;
+        }
+        /* Experience heading */
+        #experience .font-display.text-2xl {
+            font-size: 1.25rem;
+        }
+        #experience .w-8.h-8 {
+            width: 28px;
+            height: 28px;
+            font-size: 0.75rem;
+        }
     }
 
     /* Touch: disable galaxy drag, use touch scroll */
@@ -1031,7 +1175,7 @@
         }
         .filter-btn {
             min-height: 44px;
-            padding: 8px 16px;
+            padding: 10px 18px;
         }
     }
 </style>
